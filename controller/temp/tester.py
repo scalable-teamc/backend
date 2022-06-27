@@ -9,7 +9,7 @@ json_data = {
             }
 
 # response = requests.post(BASE + "/post", json_data) 
-response = requests.get(BASE + "/get")
+response = requests.post(BASE + "/get")
 
 print(response)
 print(response.json())

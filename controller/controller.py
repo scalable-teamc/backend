@@ -7,10 +7,11 @@ from flask_sqlalchemy import SQLAlchemy
 import uuid
 import json
 from datetime import datetime
+import psycopg2
 
 app = Flask(__name__)
 api = Api(app)
-app.config["SQLALCHEMY_DATABASE_URI"] =  ""
+app.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:postgres@postgres:5432/postgres"
 db = SQLAlchemy(app) 
 
 # Used with @marshal_with(resource_fields), it turns returned PasteModel into JSON
@@ -28,9 +29,9 @@ class PasteModel(db.Model):
     content = db.Column(db.String())
     createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow()) # .now()
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 # Handles all incoming POST json for Post_API
@@ -47,8 +48,8 @@ class Post_API(Resource): # For POST , obtaining a data to create and store a tw
         new_paste = PasteModel(postID=new_id , userID=json_data["userID"], content=json_data["content"])
 
         # Sent json_data to database
-        # db.session.add(new_paste)
-        # db.session.commit()
+        db.session.add(new_paste)
+        db.session.commit()
 
         return new_id, 200 # return JSON data ID
 
@@ -66,6 +67,20 @@ class Get_API(Resource): # For GET ,
         }
 
         return result, 200
+
+    def post(self):
+        result = PasteModel.query.order_by("createdAt").limit(100)
+        arr = []
+        for i in result:
+            a_paste = {
+                "postID" : i.postID,
+                "userID" : i.userID,
+                "content" : i.content,
+                "createdAt" : str(i.createdAt)
+            }
+            arr.append(a_paste)
+        return arr, 200
+        # return {"id":new_id}, 200 # return JSON data ID
 
 
 

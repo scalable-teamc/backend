@@ -1,0 +1,43 @@
+version: "3"
+services:
+
+  # Database
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    networks:
+      - controller-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - dbdata:/var/lib/postgresql/data
+      # - ./dbdata/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
+  # Backend
+  controller:
+    image: controller
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - 5000:5000
+    environment:
+      DB_NAME: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      DB_IP: postgres
+    networks:
+      - controller-net
+      
+volumes:
+    dbdata:
+      driver: local
+
+      
+networks:
+  controller-net:

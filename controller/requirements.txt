@@ -11,4 +11,4 @@ six==1.15.0
 SQLAlchemy
 Werkzeug==1.0.1
 requests
-mariadb
+psycopg2
