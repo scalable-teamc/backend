@@ -3,10 +3,10 @@ from flask import request
 
 from service.auth_svc import *
 
-user_controller = Blueprint('user_controller', __name__)
+auth_controller = Blueprint('auth_controller', __name__)
 
 
-@user_controller.route('/register', methods=['POST'])
+@auth_controller.route('/register', methods=['POST'])
 def register_route():
     data = request.json
     username = data['username']
@@ -14,7 +14,7 @@ def register_route():
     return register(username, password)
 
 
-@user_controller.route('/auth', methods=['POST'])
+@auth_controller.route('/auth', methods=['POST'])
 def auth_route():
     credentials = request.json
     if credentials:
