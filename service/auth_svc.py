@@ -1,61 +1,29 @@
-import hashlib
-import logging
+from flask_login import login_user
+from flask_sqlalchemy import SQLAlchemy
 
-from database import user_db
 from model.user_account import UserAccount
 
+database = SQLAlchemy()
 
-def authenticate(username: str, password: str) -> bool:
+
+def authenticate(username: str, password: str):
     if not username or not password:
         return False
-    db_user = user_db.get_user_by_username_api(username)
-    if db_user and compare_password(password, db_user.get('password')):
-        logging.info("Successfully Login as {}".format(username))
-        return True
-    return False
+    user: UserAccount = database.session.query(UserAccount).filter_by(username=username).first()
+    if user and user.verify_password(password):
+        login_user(user)
+        return {"message": "Successfully Login as {}".format(username)}
+    return {"message": "Login Fail"}
 
 
-def compare_password(input_password, db_hash_password) -> bool:
-    input_hash_password = hashlib.md5(input_password.encode()).hexdigest()
-    return input_hash_password == db_hash_password
+def register(username: str, password: str):
+    new_user = UserAccount(username, password)
+    database.session.add(new_user)
+    database.session.commit()
+    if user_exist(username):
+        return {"message": f"User {new_user.username} has been created successfully."}
+    return {"message": f" Fail to create User {new_user.username}."}
 
 
-def is_user_exist_by_id(user_id: int) -> bool:
-    return bool(user_db.get_user_by_id_api(user_id))
-
-
-def is_user_exist_by_username(username: str) -> bool:
-    return bool(user_db.get_user_by_username_api(username))
-
-
-def is_user_profile_exist(user_id: int) -> bool:
-    return bool(user_db.get_user_profile_by_user_id_api(user_id))
-
-
-def register(account: UserAccount) -> bool:
-    user_id = add_new_user(account.username, account.password)
-    profile_id = user_db.add_new_user_profile_api(user_id, account.firstname, account.lastname, account.phone_number)
-    if user_id and profile_id:
-        logging.info("Successfully register account {}".format(account.username))
-        return True
-    user_db.delete_account_api(user_id)
-    logging.warning("Fail to register account {}".format(account.username))
-    return False
-
-
-def add_new_user(username: str, password: str):
-    if user_db.get_user_by_username_api(username):
-        logging.info("User already exist")
-        return None
-    hash_password = hashlib.md5(password.encode()).hexdigest()
-    return user_db.add_user_api(username, hash_password)
-
-
-def delete_account(user_id: int) -> bool:
-    username = user_db.get_username_by_id_api(user_id)
-    user_db.delete_account_api(user_id)
-    if not is_user_exist_by_id(user_id) and not is_user_profile_exist(user_id):
-        logging.info("Successfully Delete Account {}".format(username))
-        return True
-    logging.warning("Fail to Delete Account {}".format(username))
-    return False
+def user_exist(username: str):
+    return database.session.query(UserAccount.id).filter_by(username=username).first() is not None
