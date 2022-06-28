@@ -1,9 +1,16 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
+from controller.auth_controller import auth_controller
 
 app = Flask(__name__)
+app.register_blueprint(auth_controller)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/twitter_db"
+database = SQLAlchemy()
 
 if __name__ == '__main__':
+    database.init_app(app)
+    database.create_all()
     # run app in debug mode on port 8082
     app.run(debug=True, port=8082)
