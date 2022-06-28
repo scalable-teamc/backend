@@ -1,4 +1,3 @@
-from email.policy import default
 from flask import Flask, request
 
 from flask_sqlalchemy import SQLAlchemy
@@ -15,20 +14,31 @@ db = SQLAlchemy(app)
 
 class PasteModel(db.Model):
     postID = db.Column(db.String(40), primary_key=True, default=str(uuid.uuid1()))
-    userID = db.Column(db.String())
+    userID = db.Column(db.String(40))
+    mediaID = db.Column(db.String(40))
     content = db.Column(db.String())
     createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow()) # .now()
+
+    # Return as dict to be send over HTTP response
+    def to_dict(self):
+        return {
+            "postID" : self.postID,
+            "userID" : self.userID,
+            "mediaID" : self.mediaID,
+            "content" : self.content,
+            "createdAt" : str(self.createdAt)
+        }
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
-# For POST: receiving JSON
+# Taking data from user, create post, and store it 
 @app.route('/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
     new_id = str(uuid.uuid1())
-    new_paste = PasteModel(postID=new_id , userID=json_data["userID"], content=json_data["content"])
+    new_paste = PasteModel(postID=new_id , userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
@@ -36,36 +46,26 @@ def post_api():
 
     return new_id, 200 # return JSON data ID
 
-# Show all recent ones
+# Get specific post (postID identifier for each Tweet)
+@app.route('/get/<string:postID>', methods=['GET'])
+def get_api(postID):
+        result = PasteModel.query.filter_by(postID=postID).first()
+        if not result:
+            return "postID not found" , 404
+        return result.to_dict(), 200
+
+# Show most recent tweets
 @app.route('/recent', methods=['POST'])
 def recent_api():
     result = PasteModel.query.order_by("createdAt").limit(100)
+    if not result:
+        return "No post yet" , 404
+
     arr = []
     for i in result:
-        a_paste = {
-            "postID" : i.postID,
-            "userID" : i.userID,
-            "content" : i.content,
-            "createdAt" : str(i.createdAt)
-        }
-        arr.append(a_paste)
+        arr.append(i.to_dict())
     return {"lst" : arr}, 200
 
-
-
-# class Get_API(Resource): # For GET , 
-
-#     @marshal_with(resource_fields)
-#     def get(self): # get(self, paste_id):
-#         # result = PasteModel.query.filter_by(id=paste_id).first()
-#         # if not result:
-#         #     abort(404, message="No paste with such ID exists")
-
-#         result = {
-#             "Status":"GET Successful" 
-#         }
-
-#         return result, 200
 
 
 
@@ -76,10 +76,11 @@ if __name__ == "__main__":
 
 
 # TODO:
-# - Postgres DB
 # - MinIO
-# - CLean up requirements.py
+# - Return only posts of followed users
 # 
 # 
 # 
 
+# Temp
+# curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": "abcdefghijkpqrstxyz", "mediaID": "kokoaksoskao", "content": "Today is Sunday" }'

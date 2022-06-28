@@ -14,6 +14,10 @@ json_data = {
 # ^^^ DOESNT WORK WITH Flask 2.1 for some reason. Use this for POST
 # curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": "abcdefghijkpqrstxyz", "content": "Today is JJJ" }'
 
+# response = requests.get(BASE + "/get/fde9c6c0-f719-11ec-8b80-0242c0a86003", json_data) 
+# print(response.json())
+
+
 response = requests.post(BASE + "/recent")
 for i in response.json().get("lst"):
     print(i)
