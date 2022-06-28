@@ -5,8 +5,7 @@ FROM python:3.8-buster
 ADD . /app
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get -yy install libmariadb-dev
+RUN apt-get update 
 
 RUN pip install --upgrade pip
 RUN pip3 install -r requirements.txt
