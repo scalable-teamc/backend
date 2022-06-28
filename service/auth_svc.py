@@ -1,9 +1,7 @@
 from flask_login import login_user
-from flask_sqlalchemy import SQLAlchemy
 
+from model import database
 from model.user_account import UserAccount
-
-database = SQLAlchemy()
 
 
 def authenticate(username: str, password: str):
@@ -21,8 +19,8 @@ def register(username: str, password: str):
     database.session.add(new_user)
     database.session.commit()
     if user_exist(username):
-        return {"message": f"User {new_user.username} has been created successfully."}
-    return {"message": f" Fail to create User {new_user.username}."}
+        return {"message": f"User {username} has been created successfully."}
+    return {"message": f" Fail to create User {username}."}
 
 
 def user_exist(username: str):
