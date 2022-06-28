@@ -1,7 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+from controller.user_controller import user_controller
+
 app = Flask(__name__)
+app.register_blueprint(user_controller)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/twitter_db"
 database = SQLAlchemy()
