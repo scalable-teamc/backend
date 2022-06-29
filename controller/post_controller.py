@@ -75,10 +75,8 @@ def recent_api():
 # - Return only posts of followed users
 
 # TODO:
-# - Integrate Blueprint at post_controller with app.py
 # - See if putting DB config in here works
 # - Move PasteModel to /model
-# - Update requirements
 # - Dockerfile and etc.
 # - General refactor
 
