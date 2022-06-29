@@ -7,61 +7,36 @@ import json
 from datetime import datetime
 import psycopg2
 
+from service.post import *
+
 post_controller = Blueprint('post_controller', __name__)
+# post_controller.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:postgres@postgres:5432/postgres"
+# db = SQLAlchemy(post_controller)
 
-post_controller.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:postgres@postgres:5432/postgres"
-db = SQLAlchemy(post_controller)
 
 
-class PasteModel(db.Model):
-    postID = db.Column(db.String(40), primary_key=True, default=str(uuid.uuid1()))
-    userID = db.Column(db.String(40))
-    mediaID = db.Column(db.String(40))
-    content = db.Column(db.String())
-    createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow()) # .now()
-
-    # Return as dict to be send over HTTP response
-    def to_dict(self):
-        return {
-            "postID" : self.postID,
-            "userID" : self.userID,
-            "mediaID" : self.mediaID,
-            "content" : self.content,
-            "createdAt" : str(self.createdAt)
-        }
-
-# Taking data from user, create post, and store it 
+# Response: ID of newly created post as str
 @post_controller.route('/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
-    new_id = str(uuid.uuid1())
-    new_paste = PasteModel(postID=new_id , userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
+    result = create_post(json_data) # result will be postID
+    return result, 200 
 
-    # Sent json_data to database
-    db.session.add(new_paste)
-    db.session.commit()
-
-    return new_id, 200 # return JSON data ID
-
-# Get specific post (postID identifier for each Tweet)
+# Response: requested post in the format of dict
 @post_controller.route('/get/<string:postID>', methods=['GET'])
 def get_api(postID):
-        result = PasteModel.query.filter_by(postID=postID).first()
-        if not result:
-            return "postID not found" , 404
-        return result.to_dict(), 200
+    result = get_specific_post(postID) # result will be dict
+    if result is None:
+        return "postID not found" , 404
+    return result, 200
 
-# Show most recent tweets
+# Response: dict whose value is array of posts
 @post_controller.route('/recent', methods=['POST'])
 def recent_api():
-    result = PasteModel.query.order_by("createdAt").limit(100)
-    if not result:
+    result = get_recent_posts()
+    if result is None:
         return "No post yet" , 404
-
-    arr = []
-    for i in result:
-        arr.append(i.to_dict())
-    return {"lst" : arr}, 200
+    return {"lst" : result}, 200
 
 
 
@@ -76,9 +51,7 @@ def recent_api():
 
 # TODO:
 # - See if putting DB config in here works
-# - Move PasteModel to /model
 # - Dockerfile and etc.
-# - General refactor
 
 
 # Temp
