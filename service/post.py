@@ -11,14 +11,13 @@ from model.post_model import PasteModel
 
 # Taking data from user, create post, and store it. Return str
 def create_post(json_data):
-    new_id = str(uuid.uuid1())
-    new_paste = PasteModel(postID=new_id , userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
     db.session.commit()
 
-    return new_id # return JSON data ID
+    return "Post created"
 
 
 # Get specific post (postID identifier for each Tweet). Return dict
