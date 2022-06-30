@@ -11,6 +11,8 @@ from . import database
 
 
 class PasteModel(database.Model):
+    __tablename__ = 'posts'
+
     postID = database.Column(database.Integer(), primary_key=True, autoincrement=True)
     userID = database.Column(database.Integer(), autoincrement=True)
     mediaID = database.Column(database.Integer(), autoincrement=True)
