@@ -13,9 +13,9 @@ db = SQLAlchemy(app)
 
 
 class PasteModel(db.Model):
-    postID = db.Column(db.String(40), primary_key=True, default=str(uuid.uuid1()))
-    userID = db.Column(db.String(40))
-    mediaID = db.Column(db.String(40))
+    postID = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    userID = db.Column(db.Integer(), autoincrement=True)
+    mediaID = db.Column(db.Integer(), autoincrement=True)
     content = db.Column(db.String())
     createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow()) # .now()
 
@@ -26,7 +26,7 @@ class PasteModel(db.Model):
             "userID" : self.userID,
             "mediaID" : self.mediaID,
             "content" : self.content,
-            "createdAt" : str(self.createdAt)
+            "createdAt" : self.createdAt
         }
 
 @app.before_first_request
@@ -37,14 +37,13 @@ def create_tables():
 @app.route('/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
-    new_id = str(uuid.uuid1())
-    new_paste = PasteModel(postID=new_id , userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
     db.session.commit()
 
-    return new_id, 200 # return JSON data ID
+    return "Post created", 200 # return JSON data ID
 
 # Get specific post (postID identifier for each Tweet)
 @app.route('/get/<string:postID>', methods=['GET'])
@@ -74,6 +73,7 @@ def recent_api():
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
 
+# RESET DATABSE: Delete in Docker Volume
 
 # TODO:
 # - MinIO
@@ -83,4 +83,4 @@ if __name__ == "__main__":
 # 
 
 # Temp
-# curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": "abcdefghijkpqrstxyz", "mediaID": "kokoaksoskao", "content": "Today is Sunday" }'
+# curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx" }'
