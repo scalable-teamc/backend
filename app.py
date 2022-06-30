@@ -2,6 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 
 from controller.auth_controller import auth_controller
+from controller.post_controller import post_controller
 from model import database
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ if __name__ == '__main__':
         database.session.commit()
     login_manager.init_app(app)
     app.register_blueprint(auth_controller)
+    app.register_blueprint(post_controller)
 
     # run app in debug mode on port 8082
     app.run(debug=True, port=8082)
