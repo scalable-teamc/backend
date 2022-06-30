@@ -2,28 +2,20 @@ from app import app
 from storage import MINIO_CLIENT
 import os
 
-# generate bucket of avatar
-found = MINIO_CLIENT.bucket_exists("avatar")
-if not found:
-    MINIO_CLIENT.make_bucket("avatar")
 
-
-def save_avatar(image, name, bucket):
+# Take picture and save to minio
+def save_avatar(image_path, username_bucket):
 
     # Save profile picture to MINIO
-    MINIO_CLIENT.fget_object(bucket_name=bucket, object_name=image, file_path=image)
+    MINIO_CLIENT.fput_object(username_bucket, object_name=username_bucket + "_avatar", file_path=image_path
+                             , content_type="image/jpg")
 
-    if not os.path.exists("images"):
-        os.mkdir("images")
-
-    MINIO_CLIENT.fput_object("avatar", object_name=name + ".png", file_path="images/" + name + ".png",
-                             content_type="image/png")
-    try:
-        os.remove("images/" + name + ".png")
-    except:
-        pass
+    return "Picture saved to Minio"
 
 
-# def set_avatar(image, bucket):
-#
-#     MINIO_CLIENT.fget_object("avatar", )
+# Get username's avatar from Minio
+def get_avatar_file(username_bucket):
+
+    # Get picture from MINIO
+    return MINIO_CLIENT.fget_object(bucket_name=username_bucket, object_name=username_bucket + "_avatar")
+
