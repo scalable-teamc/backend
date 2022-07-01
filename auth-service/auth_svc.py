@@ -1,14 +1,16 @@
 from flask_login import login_user
 from storage import MINIO_CLIENT
 
-from model import database
-from model.user_account import UserAccount
+from user_account import UserAccount
+from . import user_db as database
 
 
 def authenticate(username: str, password: str):
     if not username or not password:
         return False
-    user: UserAccount = database.session.query(UserAccount).filter_by(username=username).first()
+    if not user_exist(username):
+        return {"message": "User:{} does not exist".format(username)}
+    user: UserAccount = get_user_by_username(username)
     if user and user.verify_password(password):
         login_user(user)
         return {"message": "Successfully Login as {}".format(username)}
@@ -16,6 +18,8 @@ def authenticate(username: str, password: str):
 
 
 def register(username: str, password: str):
+    if user_exist(username):
+        return {"message": "User:{} already exist".format(username)}
     new_user = UserAccount(username, password)
     database.session.add(new_user)
     database.session.commit()
@@ -27,3 +31,11 @@ def register(username: str, password: str):
 
 def user_exist(username: str):
     return database.session.query(UserAccount.id).filter_by(username=username).first() is not None
+
+
+def get_user_by_id(user_id: int) -> UserAccount:
+    return database.session.query(UserAccount).filter_by(id=user_id).first()
+
+
+def get_user_by_username(username: str) -> UserAccount:
+    return database.session.query(UserAccount).filter_by(username=username).first()

@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 import psycopg2
 
-from service.post import *
+from post.post import *
 
 post_controller = Blueprint('post_controller', __name__)
 # post_controller.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:postgres@postgres:5432/postgres"
@@ -55,4 +55,4 @@ def recent_api():
 
 
 # Temp
-# curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": "abcdefghijkpqrstxyz", "mediaID": "kokoaksoskao", "content": "Today is Sunday" }'
+# # curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx" }' 
