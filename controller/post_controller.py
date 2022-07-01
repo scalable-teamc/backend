@@ -55,4 +55,4 @@ def recent_api():
 
 
 # Temp
-# curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": "abcdefghijkpqrstxyz", "mediaID": "kokoaksoskao", "content": "Today is Sunday" }'
+# # curl -X POST http://127.0.0.1:5000/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx" }' 
