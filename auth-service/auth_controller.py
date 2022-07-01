@@ -1,11 +1,11 @@
 from flask import Blueprint, request
 
-from service.auth_svc import *
+from auth_svc import *
 
 auth_controller = Blueprint('auth_controller', __name__)
 
 
-@auth_controller.route('/register', methods=['POST'])
+@auth_controller.route('/auth/register', methods=['POST'])
 def register_post():
     data = request.json
     username = data['username']
@@ -13,7 +13,7 @@ def register_post():
     return register(username, password)
 
 
-@auth_controller.route('/login', methods=['POST'])
+@auth_controller.route('/auth/login', methods=['POST'])
 def login_post():
     credentials = request.json
     if credentials:
