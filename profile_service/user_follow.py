@@ -1,6 +1,6 @@
 from sqlalchemy.dialects.postgresql import ARRAY
 
-from . import profile_db as database
+from profile_service import profile_db as database
 
 
 class UserFollow(database.Model):

@@ -1,6 +1,4 @@
-from app import app
 from storage import MINIO_CLIENT
-import os
 
 
 # Take picture and save to minio
