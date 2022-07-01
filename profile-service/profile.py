@@ -1,6 +1,6 @@
-from app import app
-from minio import Minio
 import os
+
+from minio import Minio
 
 # ACCESS_KEY = os.environ.get('MINIO_ACCESS_KEY')
 # SECRET_KEY = os.environ.get('MINIO_SECRET_KEY')
