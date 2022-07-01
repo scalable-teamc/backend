@@ -1,11 +1,5 @@
-from flask import Flask, request, Blueprint
-
-from flask_sqlalchemy import SQLAlchemy
-
 import uuid
-import json
 from datetime import datetime
-import psycopg2
 
 from . import database
 

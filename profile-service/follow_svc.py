@@ -1,7 +1,7 @@
 from sqlalchemy.orm.attributes import flag_modified
 
 from model import database
-from model.user_follow import UserFollow
+from user_follow import UserFollow
 
 
 def add_new_following(follow_id: int, new_following_id: int):

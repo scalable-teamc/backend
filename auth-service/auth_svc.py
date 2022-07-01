@@ -1,8 +1,7 @@
 from flask_login import login_user
 
-from model import database
-from model.user_account import UserAccount
-from model.user_follow import UserFollow
+from user_account import UserAccount
+from . import user_db as database
 
 
 def authenticate(username: str, password: str):
@@ -20,12 +19,7 @@ def authenticate(username: str, password: str):
 def register(username: str, password: str):
     if user_exist(username):
         return {"message": "User:{} already exist".format(username)}
-    new_follow_data = UserFollow()
-    database.session.add(new_follow_data)
-    database.session.commit()
-    database.session.refresh(new_follow_data)
-    follow_id = new_follow_data.id
-    new_user = UserAccount(username, password, follow_id)
+    new_user = UserAccount(username, password)
     database.session.add(new_user)
     database.session.commit()
     if user_exist(username):

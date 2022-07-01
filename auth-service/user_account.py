@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import database
+from . import user_db as database
 
 
 class UserAccount(UserMixin, database.Model):
@@ -10,12 +10,10 @@ class UserAccount(UserMixin, database.Model):
     id = database.Column(database.Integer(), primary_key=True, autoincrement=True)
     username = database.Column(database.String(), unique=True, nullable=False)
     password = database.Column(database.String(), nullable=False)
-    followID = database.Column(database.Integer(), nullable=False)
 
-    def __init__(self, username: str, password: str, follow_id: int):
+    def __init__(self, username: str, password: str):
         self.username = username
         self.password = generate_password_hash(password)
-        self.followID = follow_id
 
     def __repr__(self):
         return f"<Username: {self.username}>"
