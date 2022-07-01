@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 
-from controller.post_controller import post_controller
+from post.post_controller import post_controller
 
 app = Flask(__name__)
 

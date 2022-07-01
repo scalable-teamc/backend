@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 import psycopg2
 
-from service.post import *
+from post.post import *
 
 post_controller = Blueprint('post_controller', __name__)
 # post_controller.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:postgres@postgres:5432/postgres"
