@@ -1,4 +1,3 @@
-from app import app
 from storage import MINIO_CLIENT
 import os
 import base64
