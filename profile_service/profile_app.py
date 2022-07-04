@@ -1,10 +1,13 @@
 from flask import Flask
+from flask_cors import CORS
 
 from profile_service import profile_db
 from profile_service.profile_controller import profile_controller
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/profile_db"
+
 
 if __name__ == '__main__':
     profile_db.init_app(app)
