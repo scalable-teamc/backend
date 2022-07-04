@@ -13,8 +13,8 @@ def authenticate(username: str, password: str):
     user: UserAccount = get_user_by_username(username)
     if user and user.verify_password(password):
         login_user(user)
-        return {"success": True, "message": "Successfully Login as {}".format(username)}
-    return {"success": False, "uid": user.id, "message": "Login Fail"}
+        return {"success": True, "uid": user.id, "message": "Successfully Login as {}".format(username)}
+    return {"success": False, "message": "Login Fail"}
 
 
 def register(username: str, password: str):
