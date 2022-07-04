@@ -14,7 +14,7 @@ def authenticate(username: str, password: str):
     if user and user.verify_password(password):
         login_user(user)
         return {"success": True, "message": "Successfully Login as {}".format(username)}
-    return {"success": False, "message": "Login Fail"}
+    return {"success": False, "uid": user.id, "message": "Login Fail"}
 
 
 def register(username: str, password: str):
@@ -23,9 +23,10 @@ def register(username: str, password: str):
     new_user = UserAccount(username, password)
     database.session.add(new_user)
     database.session.commit()
+    database.session.refresh(new_user)
     if user_exist(username):
         MINIO_CLIENT.make_bucket(username)
-        return {"success": True, "message": f"User {username} has been created successfully."}
+        return {"success": True, "uid": new_user.id, "message": f"User {username} has been created successfully."}
     return {"success": False, "message": f" Fail to create User {username}."}
 
 
