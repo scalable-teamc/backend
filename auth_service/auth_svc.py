@@ -30,6 +30,16 @@ def register(username: str, password: str):
     return {"success": False, "message": f" Fail to create User {username}."}
 
 
+def remove_user(username: str):
+    if not user_exist(username):
+        return {"success": True, "message": "User not exist"}
+    database.session.query(UserAccount).filter_by(username=username).delete()
+    database.session.commit()
+    if not user_exist(username):
+        return {"success": True, "message": "Removed User:{}".format(username)}
+    return {"success": False, "message": "Fail to remove User:{}".format(username)}
+
+
 def user_exist(username: str):
     return database.session.query(UserAccount.id).filter_by(username=username).first() is not None
 
