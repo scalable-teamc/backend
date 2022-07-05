@@ -63,3 +63,11 @@ def get_profile_by_id(profile_id: int) -> UserProfile:
     return database.session.query(UserProfile).filter_by(id=profile_id).first()
 
 
+def get_display_name(profile_id: int):
+    return database.session.query(UserProfile.display_name).filter_by(id=profile_id).first()
+
+
+def get_description(profile_id: int):
+    return database.session.query(UserProfile.description).filter_by(id=profile_id).first()
+
+
