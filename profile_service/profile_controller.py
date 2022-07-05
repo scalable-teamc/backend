@@ -1,4 +1,3 @@
-from storage import MINIO_CLIENT
 from flask import Blueprint, request
 from .profile import *
 
@@ -11,5 +10,6 @@ def get_avatar():
     data = request.get_json()
     uid = data['uid']
     image = data['image']
-    save_avatar(uid, image)
-    return get_avatar_file(uid)
+    ctype = data['type']
+    save_avatar(uid, image, ctype)
+    return 'f'
