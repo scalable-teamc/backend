@@ -3,5 +3,8 @@ psycopg2==2.8
 Flask-SQLAlchemy
 requests
 Jinja2
+minio
 psycopg2-binary
 flask-login
+sqlalchemy_utils
+flask_cors

@@ -1,6 +1,6 @@
 from sqlalchemy.orm.attributes import flag_modified
 
-from model import database
+from profile_service import profile_db as database
 from user_follow import UserFollow
 
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from auth_svc import *
+from .auth_svc import *
 
 auth_controller = Blueprint('auth_controller', __name__)
 
@@ -20,3 +20,10 @@ def login_post():
         username = credentials['username']
         password = credentials['password']
         return authenticate(username, password)
+
+
+@auth_controller.route('/auth/remove', methods=['DELETE'])
+def user_delete():
+    data = request.json
+    username = data['username']
+    return remove_user(username)
