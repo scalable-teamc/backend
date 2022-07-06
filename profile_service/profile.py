@@ -30,47 +30,43 @@ def save_avatar(username_bucket, image_file, ctype):
 def get_avatar(username_bucket):
 
     pic = None
+    content_type = None
     # Get picture from MINIO
     for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=username_bucket):
         base_64 = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
         pic = base64.b64encode(base_64.read()).decode('utf-8')
-
-    return pic
-
-
-def add_display_name(user_id: int, display_name: str):
-
-    profile_data: UserProfile = get_profile_by_id(user_id)
-    profile_data.display_name.append(display_name)
-    flag_modified(profile_data, "display_name")
-    database.session.merge(profile_data)
-    database.session.commit()
-    database.session.refresh(profile_data)
-
-    return {"message": "New display name display_name:[] is added".format(display_name)}
+        content_type = "data:" + obj.content_type + ";base64,"
+    return content_type + pic
 
 
-def add_description(user_id: int, description: str):
+def add_profile(user_id: int, display_name: str, description: str):
 
-    profile_data: UserProfile = get_profile_by_id(user_id)
-    profile_data.description.append(description)
-    flag_modified(profile_data, "description")
-    database.session.merge(profile_data)
-    database.session.commit()
-    database.session.refresh(profile_data)
+    profile_data = get_profile_by_id(user_id)
+    if profile_data is None:
+        user = UserProfile(user_id, display_name, description)
+        database.session.add(user)
+        database.session.commit()
+    else:
+        profile_data.display_name = display_name
+        profile_data.description = description
+        flag_modified(profile_data, "display_name")
+        flag_modified(profile_data, "description")
+        database.session.merge(profile_data)
+        database.session.commit()
+        database.session.refresh(profile_data)
 
-    return {"message": "New description description:[] is added".format(description)}
+    return "New Profile is added"
 
 
 def get_profile_by_id(profile_id: int) -> UserProfile:
-    return database.session.query(UserProfile).filter_by(id=profile_id).first()
+    return database.session.query(UserProfile).filter_by(uid=profile_id).first()
 
 
 def get_display_name(profile_id: int):
-    return database.session.query(UserProfile.display_name).filter_by(id=profile_id).first()
+    return database.session.query(UserProfile.display_name).filter_by(uid=profile_id).first()
 
 
 def get_description(profile_id: int):
-    return database.session.query(UserProfile.description).filter_by(id=profile_id).first()
+    return database.session.query(UserProfile.description).filter_by(uid=profile_id).first()
 
 
