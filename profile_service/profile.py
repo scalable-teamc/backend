@@ -11,6 +11,9 @@ import base64
 # Take picture and save to minio
 def save_avatar(username_bucket, image_file, ctype):
 
+    if ctype == "":
+        return
+
     img = base64.b64decode(bytes(image_file, 'utf-8'))
     ext = '.' + ctype.split('/')[1]
     size = len(img)

@@ -11,23 +11,25 @@ def save_profile():
 
     data = request.get_json()
     uid = data['uid']
+    username = data['username']
     image = data['image']
     ctype = data['type']
     display_name = data['display_name']
     description = data['description']
-    save_avatar(uid, image, ctype)
-    add_display_name(uid,display_name)
+    save_avatar(username, image, ctype)
+    add_display_name(uid, display_name)
     add_description(uid, description)
 
     return 'All details are saved'
 
 
-@profile_controller.route('/profile/getprof', methods=['GET'])
+@profile_controller.route('/profile/getprof', methods=['POST'])
 def get_profile():
 
     data = request.get_json()
     uid = data['uid']
-    picture = get_avatar(uid)
+    username = data['username']
+    picture = get_avatar(username)
     display_name = get_display_name(uid)
     description = get_description(uid)
 
