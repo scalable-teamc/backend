@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request
 from .profile import *
 
@@ -16,37 +18,56 @@ def save_profile():
     save_avatar(uid, image, ctype)
     add_display_name(uid,display_name)
     add_description(uid, description)
-    return 'f'
+
+    return 'All details are saved'
 
 
-@profile_controller.route('/profile/pic', methods=['GET'])
-def get_pic():
+@profile_controller.route('/profile/getprof', methods=['GET'])
+def get_profile():
 
-    # frontend need to send uid somehow
     data = request.get_json()
     uid = data['uid']
     picture = get_avatar(uid)
-
-    return picture
-
-
-@profile_controller.route('/profile/disname', methods=['GET'])
-def get_disp():
-
-    # frontend need to send uid somehow
-    data = request.get_json()
-    uid = data['uid']
     display_name = get_display_name(uid)
-
-    return display_name
-
-
-@profile_controller.route('/profile/description', methods=['GET'])
-def get_desc():
-
-    # frontend need to send uid somehow
-    data = request.get_json()
-    uid = data['uid']
     description = get_description(uid)
 
-    return description
+    value = {
+        "picture": picture,
+        "display_name": display_name,
+        "description": description
+    }
+
+    return json.dumps(value)
+
+
+# @profile_controller.route('/profile/pic', methods=['GET'])
+# def get_pic():
+#
+#     # frontend need to send uid somehow
+#     data = request.get_json()
+#     uid = data['uid']
+#     picture = get_avatar(uid)
+#
+#     return picture
+#
+#
+# @profile_controller.route('/profile/disname', methods=['GET'])
+# def get_disp():
+#
+#     # frontend need to send uid somehow
+#     data = request.get_json()
+#     uid = data['uid']
+#     display_name = get_display_name(uid)
+#
+#     return display_name
+#
+#
+# @profile_controller.route('/profile/description', methods=['GET'])
+# def get_desc():
+#
+#     # frontend need to send uid somehow
+#     data = request.get_json()
+#     uid = data['uid']
+#     description = get_description(uid)
+#
+#     return description
