@@ -33,6 +33,8 @@ def get_avatar(username_bucket):
     content_type = None
     # Get picture from MINIO
     for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=username_bucket):
+        if obj is None:
+            return ""
         base_64 = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
         pic = base64.b64encode(base_64.read()).decode('utf-8')
         content_type = "data:" + obj.content_type + ";base64,"
