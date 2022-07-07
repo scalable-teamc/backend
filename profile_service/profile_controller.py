@@ -13,10 +13,10 @@ def save_profile():
     uid = data['uid']
     username = data['username']
     image = data['image']
-    type = data['type']
+    ctype = data['type']
     display_name = data['display_name']
     description = data['description']
-    save_avatar(username, image, type)
+    save_avatar(username, image, ctype)
     add_profile(uid, display_name, description)
 
     return 'All details are saved'
