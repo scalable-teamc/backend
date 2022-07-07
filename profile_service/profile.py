@@ -10,7 +10,6 @@ import base64
 
 # Take picture and save to minio
 def save_avatar(username_bucket, image_file, ctype):
-
     if ctype == "":
         return
 
@@ -20,29 +19,30 @@ def save_avatar(username_bucket, image_file, ctype):
     img = io.BytesIO(img)
 
     # Save profile picture to MINIO
-    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name= username_bucket +
-                            "_avatar" + ext, data=img, length=size, content_type=ctype)
+    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=username_bucket +
+                                                                     "_avatar" + ext, data=img, length=size,
+                            content_type=ctype)
 
     return ext
 
 
 # Get username's avatar from Minio
 def get_avatar(username_bucket):
-
-    pic = ""
+    content = ""
     content_type = ""
     # Get picture from MINIO
     for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=username_bucket):
-        base_64 = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
-        pic = base64.b64encode(base_64.read()).decode('utf-8')
-        if not obj.content_type:
+        if obj is None:
             return ""
-        content_type = "data:" + obj.content_type + ";base64,"
-    return content_type + pic
+        pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
+        content = base64.b64encode(pic.read()).decode('utf-8')
+        ext = obj.object_name.split('.')[1]
+        # content_type = "data:" + obj.content_type + ";base64,"
+        content_type = "data:" + ext + ";base64,"
+    return content_type + content
 
 
 def add_profile(user_id: int, display_name: str, description: str):
-
     profile_data = get_profile_by_id(user_id)
     if profile_data is None:
         user = UserProfile(user_id, display_name, description)
@@ -70,5 +70,3 @@ def get_display_name(profile_id: int):
 
 def get_description(profile_id: int):
     return database.session.query(UserProfile.description).filter_by(uid=profile_id).first()
-
-

@@ -29,8 +29,9 @@ def get_profile():
     uid = data['uid']
     username = data['username']
     picture = get_avatar(username)
-    display_name = get_display_name(uid)
-    description = get_description(uid)
+    profile = get_profile_by_id(uid)
+    display_name = profile.display_name
+    description = profile.description
 
     value = {
         "picture": picture,

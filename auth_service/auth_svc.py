@@ -25,7 +25,7 @@ def register(username: str, password: str):
     database.session.commit()
     database.session.refresh(new_user)
     if user_exist(username):
-        MINIO_CLIENT.make_bucket(str(new_user.id))
+        MINIO_CLIENT.make_bucket(username)
         return {"success": True, "uid": new_user.id, "message": f"User {username} has been created successfully."}
     return {"success": False, "message": f" Fail to create User {username}."}
 
