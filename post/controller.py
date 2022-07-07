@@ -50,6 +50,10 @@ def post_api():
 
     new_paste = PasteModel(userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
 
+    # Sent json_data to database
+    db.session.add(new_paste)
+    db.session.commit()
+
     # Saving media (If there's no image, json_data['image'] == None)
     image = json_data['image']
     if image is not None:
@@ -60,10 +64,6 @@ def post_api():
         ctype = json_data['type']
 
         save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
-
-    # Sent json_data to database
-    db.session.add(new_paste)
-    db.session.commit()
 
     return "Post created\n", 200  # return JSON data ID
     # return str(new_paste.to_dict()["postID"]), 200  # return JSON data ID
