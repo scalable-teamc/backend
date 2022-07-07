@@ -53,20 +53,20 @@ def post_api():
     # Saving media (If there's no image, json_data['image'] == None)
     image = json_data['image']
     if image is not None:
-        new_paste_dict = new_paste.to_dict()
 
         username = json_data["username"]
-        postID = str(new_paste_dict["postID"])
+        id_of_post = str(new_paste.to_dict()["postID"])
         image = json_data["image"]
         ctype = json_data['type']
 
-        save_image(username, postID, image, ctype)
+        save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
 
     # Sent json_data to database
     db.session.add(new_paste)
     db.session.commit()
 
     return "Post created\n", 200  # return JSON data ID
+    # return str(new_paste.to_dict()["postID"]), 200  # return JSON data ID
 
 # Helper function for post_api()
 def save_image(username_bucket, postID, image_file, ctype):
@@ -79,9 +79,7 @@ def save_image(username_bucket, postID, image_file, ctype):
     img = io.BytesIO(img)
 
     # Save image to MINIO. Image name will be <postID>_image.ext
-    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=str(postID) +
-                                                                     "_image" + ext, data=img, length=size,
-                            content_type=ctype)
+    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size, content_type=ctype)
     return ext
 
 
