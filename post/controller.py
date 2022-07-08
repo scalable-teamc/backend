@@ -97,7 +97,7 @@ def get_api(postID):
 
     # Fetch media and add in new parameters
     username = final["username"]
-    final["image"] = get_image(username)
+    final["image"] = get_image(username, final["postID"])
 
     return final, 200
 
