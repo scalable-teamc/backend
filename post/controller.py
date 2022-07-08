@@ -15,14 +15,14 @@ from storage import MINIO_CLIENT
 
 app = Flask(__name__)
 CORS(app)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:password@localhost:5432/postgres"
+app.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:password@localhost:5432/postgres" # "postgresql://postgres:postgres@postgres:5432/postgres" #
 db = SQLAlchemy(app)
 
 
 class PasteModel(db.Model):
     postID = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    userID = db.Column(db.Integer(), autoincrement=True)
-    mediaID = db.Column(db.Integer(), autoincrement=True)
+    userID = db.Column(db.Integer())
+    username = db.Column(db.String())
     content = db.Column(db.String())
     createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow())  # .now()
 
@@ -31,7 +31,7 @@ class PasteModel(db.Model):
         return {
             "postID": self.postID,
             "userID": self.userID,
-            "mediaID": self.mediaID,
+            "username": self.username,
             "content": self.content,
             "createdAt": self.createdAt
         }
@@ -43,12 +43,13 @@ def create_tables():
 
 
 # Taking data from user, create post, and store it
-# Parameters in request: (userID, mediaID, content, image, type, username)
+# Parameters needed in incoming request: (userID, content, image, type, username)
+# What is kept in DB: (userID, content, postID, createAt)
 @app.route('/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
 
-    new_paste = PasteModel(userID=json_data["userID"], mediaID=json_data["mediaID"], content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
@@ -66,7 +67,6 @@ def post_api():
         save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
 
     return "Post created\n", 200  # return JSON data ID
-    # return str(new_paste.to_dict()["postID"]), 200  # return JSON data ID
 
 # Helper function for post_api()
 def save_image(username_bucket, postID, image_file, ctype):
@@ -81,16 +81,41 @@ def save_image(username_bucket, postID, image_file, ctype):
     # Save image to MINIO. Image name will be <postID>_image.ext
     MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size, content_type=ctype)
     return ext
+    # return username_bucket, postID, image_file, ctype
 
 
 
 # Get specific post (postID identifier for each Tweet)
+# Response dict will contain: (userID, content, image, postID, createAt)
+# image is not kept in DB, but fetched from MINIO upon every get request
 @app.route('/get/<int:postID>', methods=['GET'])
 def get_api(postID):
     result = PasteModel.query.filter_by(postID=postID).first()
     if not result:
         return "postID not found\n", 404
-    return result.to_dict(), 200
+    final = result.to_dict()
+
+    # Fetch media and add in new parameters
+    username = final["username"]
+    final["image"] = get_image(username, final["postID"])
+
+    return final, 200
+
+# Helper function for get_api() and recent_api()
+def get_image(username_bucket, postID):
+    content = ""
+    content_type = ""
+    # Get picture from MINIO
+    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=postID+"_image"):
+        if obj is None:
+            return None
+        pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
+        content = base64.b64encode(pic.read()).decode('utf-8')
+        ext = obj.object_name.split('.')[1]
+        # content_type = "data:" + obj.content_type + ";base64,"
+        content_type = "data:" + ext + ";base64,"
+    return content_type + content
+    # return str(username_bucket) + "_IMAGEIMAGE"
 
 
 # Show most recent tweets
@@ -102,7 +127,13 @@ def recent_api():
 
     arr = []
     for i in result:
-        arr.append(i.to_dict())
+        aPost = i.to_dict()
+
+        # Add pictures if there's any
+        username = aPost["username"]
+        aPost["image"] = get_image(username)
+
+        arr.append(aPost)
     return {"lst": arr}, 200
 
 
@@ -111,7 +142,7 @@ if __name__ == "__main__":
 
 # Testing for 
 # POST:
-# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx" }'
-# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx", "image": null }'
+# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "username": "JackSparrow", "content": "Today is TESRTx" }'
+# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "username": "JackSparrow", "content": "Today is TESRTx", "image": null }'
 # GET:
 # curl -X GET http://127.0.0.1:5466/get/1
