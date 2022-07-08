@@ -72,5 +72,5 @@ def get_description(profile_id: int):
     return database.session.query(UserProfile.description).filter_by(uid=profile_id).first()
 
 
-def get_by_username(username: str):
+def find_by_username(username: str):
     return database.session.query(UserProfile).filter_by(username=username).first()

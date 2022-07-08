@@ -42,34 +42,19 @@ def get_profile():
     return json.dumps(value)
 
 
-# @profile_controller.route('/profile/pic', methods=['GET'])
-# def get_pic():
-#
-#     # frontend need to send uid somehow
-#     data = request.get_json()
-#     uid = data['uid']
-#     picture = get_avatar(uid)
-#
-#     return picture
-#
-#
-# @profile_controller.route('/profile/disname', methods=['GET'])
-# def get_disp():
-#
-#     # frontend need to send uid somehow
-#     data = request.get_json()
-#     uid = data['uid']
-#     display_name = get_display_name(uid)
-#
-#     return display_name
-#
-#
-# @profile_controller.route('/profile/description', methods=['GET'])
-# def get_desc():
-#
-#     # frontend need to send uid somehow
-#     data = request.get_json()
-#     uid = data['uid']
-#     description = get_description(uid)
-#
-#     return description
+@profile_controller.route('/profile/usergetprof', methods=["GET"])
+def get_by_username():
+    data = request.get_json()
+    username = data['username']
+    picture = get_avatar(username)
+    profile = find_by_username(username)
+    display_name = profile.display_name
+    description = profile.description
+
+    value = {
+        "picture": picture,
+        "display_name": display_name,
+        "description": description
+    }
+
+    return json.dumps(value)
