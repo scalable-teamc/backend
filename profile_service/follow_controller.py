@@ -4,10 +4,10 @@ from flask import Blueprint, request
 
 from .follow_svc import *
 
-follower_controller = Blueprint('follow_controller', __name__)
+follow_controller = Blueprint('follow_controller', __name__)
 
 
-@follower_controller.route('/follow/following', methods=['POST'])
+@follow_controller.route('/follow/following', methods=['POST'])
 def following():
     data = request.json
     uid: int = data["uid"]
@@ -23,7 +23,7 @@ def following():
     return {"success": False, "message": "User:{} fail to follow User:{}".format(uid, following_id)}
 
 
-@follower_controller.route("/follow/unfollow", methods=["PATCH"])
+@follow_controller.route("/follow/unfollow", methods=["PATCH"])
 def unfollow():
     data = request.json
     uid: int = data["uid"]
