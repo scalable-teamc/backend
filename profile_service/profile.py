@@ -42,10 +42,10 @@ def get_avatar(username_bucket):
     return content_type + content
 
 
-def add_profile(user_id: int, display_name: str, description: str):
+def add_profile(user_id: int, username: str, display_name: str, description: str):
     profile_data = get_profile_by_id(user_id)
     if profile_data is None:
-        user = UserProfile(user_id, display_name, description)
+        user = UserProfile(user_id, username, display_name, description)
         database.session.add(user)
         database.session.commit()
     else:
@@ -70,3 +70,7 @@ def get_display_name(profile_id: int):
 
 def get_description(profile_id: int):
     return database.session.query(UserProfile.description).filter_by(uid=profile_id).first()
+
+
+def get_username(profile_id: int):
+    return database.session.query(UserProfile.username).filter_by(uid=profile_id).first()

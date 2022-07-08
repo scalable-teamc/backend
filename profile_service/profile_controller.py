@@ -17,7 +17,7 @@ def save_profile():
     display_name = data['display_name']
     description = data['description']
     save_avatar(username, image, ctype)
-    add_profile(uid, display_name, description)
+    add_profile(uid, username, display_name, description)
 
     return 'All details are saved'
 
