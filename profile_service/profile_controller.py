@@ -32,11 +32,15 @@ def get_profile():
     profile = get_profile_by_id(uid)
     display_name = profile.display_name
     description = profile.description
+    following = profile.following
+    follower = profile.follower
 
     value = {
         "picture": picture,
         "display_name": display_name,
-        "description": description
+        "description": description,
+        "following": following,
+        "follower": follower
     }
 
     return json.dumps(value)
@@ -62,7 +66,7 @@ def get_by_username():
     return json.dumps(value)
 
 
-@profile_controller.route('/profile/following', methods=['POST'])
+@profile_controller.route('/profile/follow', methods=['POST'])
 def following():
     data = request.json
     uid: int = data["uid"]
@@ -87,3 +91,12 @@ def unfollow():
     remove_follower_response = remove_follower(remove_id, uid)
     logging.info(remove_follower_response["message"])
     return {"success": True}
+
+
+@profile_controller.route("/profile/getfollow", methods=["POST"])
+def get_follow_info():
+    data = request.json
+    uid: int = data["uid"]
+    follow = get_follow(uid)
+    res = {"following": follow.following, "follower": follow.follower}
+    return json.dumps(res)

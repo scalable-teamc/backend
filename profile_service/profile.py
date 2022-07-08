@@ -128,3 +128,7 @@ def get_description(profile_id: int):
 
 def find_by_username(username: str):
     return database.session.query(UserProfile).filter_by(username=username).first()
+
+
+def get_follow(uid: int):
+    return database.session.query(UserProfile).filter_by(uid=uid).first()
