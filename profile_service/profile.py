@@ -89,7 +89,7 @@ def remove_following(user_id: int, remove_id: int) -> dict:
 
 def add_new_follower(user_id: int, new_follower_id: int) -> dict:
     profile: UserProfile = get_profile_by_id(user_id)
-    if new_follower_id in profile.following:
+    if new_follower_id in profile.follower:
         return {"success": False,
                 "message": "ID:{} already exist in ID:{} follower list.".format(new_follower_id, user_id)}
     profile.follower.append(new_follower_id)

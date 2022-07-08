@@ -73,9 +73,8 @@ def following():
     logging.info(add_follower_response["message"])
     if add_follower_response["success"] and add_following_response["success"]:
         return {"success": True, "message": "User:{} has follow User:{}".format(uid, following_id)}
-    remove_following(uid, following_id)
-    remove_follower(following_id, uid)
-    return {"success": False, "message": "User:{} fail to follow User:{}".format(uid, following_id)}
+    else:
+        return {"success": False, "message": "User:{} fail to follow User:{}".format(uid, following_id)}
 
 
 @profile_controller.route("/profile/unfollow", methods=["PATCH"])

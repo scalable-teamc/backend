@@ -9,8 +9,8 @@ class UserProfile(database.Model):
     uid = database.Column(database.Integer())
     display_name = database.Column(database.String())
     description = database.Column(database.Text())
-    follower = database.Column(database.ARRAY(database.Integer), default="{}")
-    following = database.Column(database.ARRAY(database.Integer), default="{}")
+    follower = database.Column(database.ARRAY(database.Integer), default="")
+    following = database.Column(database.ARRAY(database.Integer), default="")
 
     def __init__(self, uid, username, display_name, description):
         self.uid = uid
