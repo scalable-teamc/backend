@@ -7,10 +7,12 @@ class UserFollow(database.Model):
     __tablename__ = 'follow'
 
     id = database.Column(database.Integer, primary_key=True, autoincrement=True)
+    user_id = database.Column(database.Integer, nullable=False)
     follower = database.Column(ARRAY(database.Integer()))
     following = database.Column(ARRAY(database.Integer()))
 
-    def __init__(self):
+    def __init__(self, user_id: int):
+        self.user_id = user_id
         self.follower = []
         self.following = []
 
