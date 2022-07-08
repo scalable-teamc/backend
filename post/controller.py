@@ -106,7 +106,7 @@ def get_image(username_bucket, postID):
     content = ""
     content_type = ""
     # Get picture from MINIO
-    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=postID+"_"):
+    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=postID+"_image"):
         if obj is None:
             return None
         pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
