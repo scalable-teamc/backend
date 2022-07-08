@@ -7,6 +7,11 @@ import uuid
 import json
 from datetime import datetime
 import psycopg2
+import io
+import os
+import base64
+
+from storage import MINIO_CLIENT
 
 app = Flask(__name__)
 CORS(app)
@@ -38,6 +43,7 @@ def create_tables():
 
 
 # Taking data from user, create post, and store it
+# Parameters in request: (userID, mediaID, content, image, type, username)
 @app.route('/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
@@ -48,7 +54,34 @@ def post_api():
     db.session.add(new_paste)
     db.session.commit()
 
+    # Saving media (If there's no image, json_data['image'] == None)
+    image = json_data['image']
+    if image is not None:
+
+        username = json_data["username"]
+        id_of_post = str(new_paste.to_dict()["postID"])
+        image = json_data["image"]
+        ctype = json_data['type']
+
+        save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
+
     return "Post created\n", 200  # return JSON data ID
+    # return str(new_paste.to_dict()["postID"]), 200  # return JSON data ID
+
+# Helper function for post_api()
+def save_image(username_bucket, postID, image_file, ctype):
+    if ctype == "":
+        return
+
+    img = base64.b64decode(bytes(image_file, 'utf-8'))
+    ext = '.' + ctype.split('/')[1]
+    size = len(img)
+    img = io.BytesIO(img)
+
+    # Save image to MINIO. Image name will be <postID>_image.ext
+    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size, content_type=ctype)
+    return ext
+
 
 
 # Get specific post (postID identifier for each Tweet)
@@ -79,5 +112,6 @@ if __name__ == "__main__":
 # Testing for 
 # POST:
 # curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx" }'
+# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "mediaID": 990999, "content": "Today is TESRTx", "image": null }'
 # GET:
 # curl -X GET http://127.0.0.1:5466/get/1
