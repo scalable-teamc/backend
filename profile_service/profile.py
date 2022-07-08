@@ -1,11 +1,11 @@
+import base64
 import io
 
-from storage import MINIO_CLIENT
-from profile_service import profile_db as database
-from profile_account import UserProfile
 from sqlalchemy.orm.attributes import flag_modified
-import os
-import base64
+
+from profile_account import UserProfile
+from profile_service import profile_db as database
+from storage import MINIO_CLIENT
 
 
 # Take picture and save to minio
@@ -58,6 +58,60 @@ def add_profile(user_id: int, username: str, display_name: str, description: str
         database.session.refresh(profile_data)
 
     return "New Profile is added"
+
+
+def add_new_following(user_id: int, new_following_id: int) -> dict:
+    profile: UserProfile = get_profile_by_id(user_id)
+    if new_following_id in profile.following:
+        return {"success": False,
+                "message": "ID:{} already exist in ID:{} following list.".format(new_following_id, user_id)}
+    profile.following.append(new_following_id)
+    flag_modified(profile, "following")
+    database.session.merge(profile)
+    database.session.commit()
+    database.session.refresh(profile)
+    if new_following_id in profile.following:
+        return {"success": True,
+                "message": "Successfully add ID:{} to ID:{} following list.".format(new_following_id, user_id)}
+    return {"success": False, "message": "Fail to add ID:{} to ID:{} following list.".format(new_following_id, user_id)}
+
+
+def remove_following(user_id: int, remove_id: int) -> dict:
+    profile: UserProfile = get_profile_by_id(user_id)
+    if remove_id not in profile.following:
+        return {"success": True}
+    profile.following.remove(remove_id)
+    flag_modified(profile, "following")
+    database.session.merge(profile)
+    database.session.commit()
+    return {"success": True, "message": "Finish remove ID:{} from ID:{} following list".format(remove_id, user_id)}
+
+
+def add_new_follower(user_id: int, new_follower_id: int) -> dict:
+    profile: UserProfile = get_profile_by_id(user_id)
+    if new_follower_id in profile.following:
+        return {"success": False,
+                "message": "ID:{} already exist in ID:{} follower list.".format(new_follower_id, user_id)}
+    profile.follower.append(new_follower_id)
+    flag_modified(profile, "follower")
+    database.session.merge(profile)
+    database.session.commit()
+    database.session.refresh(profile)
+    if new_follower_id in profile.follower:
+        return {"success": True,
+                "message": "Successfully add ID:{} to ID:{} follower list.".format(new_follower_id, user_id)}
+    return {"success": False, "message": "Fail to add ID:{} to ID:{} follower list.".format(new_follower_id, user_id)}
+
+
+def remove_follower(user_id: int, remove_id: int) -> dict:
+    profile: UserProfile = get_profile_by_id(user_id)
+    if remove_id not in profile.follower:
+        return {"success": True}
+    profile.follower.remove(remove_id)
+    flag_modified(profile, "follower")
+    database.session.merge(profile)
+    database.session.commit()
+    return {"success": True, "message": "Finish remove ID:{} from ID:{} follower list".format(remove_id, user_id)}
 
 
 def get_profile_by_id(profile_id: int) -> UserProfile:
