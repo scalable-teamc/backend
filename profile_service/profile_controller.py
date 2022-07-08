@@ -42,16 +42,18 @@ def get_profile():
     return json.dumps(value)
 
 
-@profile_controller.route('/profile/usergetprof', methods=["GET"])
+@profile_controller.route('/profile/getuser', methods=["POST"])
 def get_by_username():
     data = request.get_json()
     username = data['username']
     picture = get_avatar(username)
     profile = find_by_username(username)
+    uid = profile.uid
     display_name = profile.display_name
     description = profile.description
 
     value = {
+        "uid": uid,
         "picture": picture,
         "display_name": display_name,
         "description": description
