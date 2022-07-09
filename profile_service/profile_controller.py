@@ -32,11 +32,15 @@ def get_profile():
     profile = get_profile_by_id(uid)
     display_name = profile.display_name
     description = profile.description
+    following = profile.following
+    follower = profile.follower
 
     value = {
         "picture": picture,
         "display_name": display_name,
-        "description": description
+        "description": description,
+        "following": following,
+        "follower": follower
     }
 
     return json.dumps(value)
@@ -62,7 +66,7 @@ def get_by_username():
     return json.dumps(value)
 
 
-@profile_controller.route('/profile/following', methods=['POST'])
+@profile_controller.route('/profile/follow', methods=['POST'])
 def following():
     data = request.json
     uid: int = data["uid"]
@@ -73,9 +77,8 @@ def following():
     logging.info(add_follower_response["message"])
     if add_follower_response["success"] and add_following_response["success"]:
         return {"success": True, "message": "User:{} has follow User:{}".format(uid, following_id)}
-    remove_following(uid, following_id)
-    remove_follower(following_id, uid)
-    return {"success": False, "message": "User:{} fail to follow User:{}".format(uid, following_id)}
+    else:
+        return {"success": False, "message": "User:{} fail to follow User:{}".format(uid, following_id)}
 
 
 @profile_controller.route("/profile/unfollow", methods=["PATCH"])
@@ -89,6 +92,34 @@ def unfollow():
     logging.info(remove_follower_response["message"])
     return {"success": True}
 
+
+@profile_controller.route("/profile/getfollow", methods=["POST"])
+def get_follow_info():
+    data = request.json
+    uid: int = data["uid"]
+    follow = get_follow(uid)
+    res = {"following": follow.following, "follower": follow.follower}
+    return json.dumps(res)
+
+
+@profile_controller.route("/profile/getshort", methods=["GET"])
+def get_short():
+    data = request.json
+    uid: int = data["uid"]
+    profile = get_profile_by_id(uid)
+
+    display_name = profile.display_name
+    username = profile.username
+
+    picture = get_avatar(username)
+
+    value = {
+        "username": username,
+        "display_name": display_name,
+        "picture": picture
+    }
+
+    return json.dumps(value)
 
 @profile_controller.route("/profile/savedPost/", methods=['POST'])
 def saved_post_controller():

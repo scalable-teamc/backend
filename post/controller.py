@@ -66,7 +66,7 @@ def post_api():
 
         save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
 
-    return "Post created\n", 200  # return JSON data ID
+    return str(new_paste.postID), 200  # return JSON data ID
 
 # Helper function for post_api()
 def save_image(username_bucket, postID, image_file, ctype):
@@ -106,7 +106,7 @@ def get_image(username_bucket, postID):
     content = ""
     content_type = ""
     # Get picture from MINIO
-    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=postID+"_image"):
+    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=str(postID)+"_image"):
         if obj is None:
             return None
         pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)

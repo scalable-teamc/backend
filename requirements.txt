@@ -8,3 +8,4 @@ psycopg2-binary
 flask-login
 sqlalchemy_utils
 flask_cors
+flask_socketio
