@@ -5,11 +5,11 @@ import datetime
 
 # Function for Online Table
 def add_online(uid: int):
-    online_data = get_online_by_uid(uid)
-    if online_data is None:
-        user = Online(uid)
-        database.session.add(user)
-        database.session.commit()
+    # online_data = get_online_by_uid(uid)
+    # if online_data is None:
+    user = Online(uid)
+    database.session.add(user)
+    database.session.commit()
 
     return "Added"
 
@@ -25,18 +25,15 @@ def remove_online(uid: int):
 
 
 # Function for Online Table
-def get_online_by_uid(feed_id: int):
-    return database.session.query(Online).filter_by(uid=feed_id).first()
+def get_online_by_uid(uid: int):
+    return database.session.query(Online).filter_by(uid=uid).first()
 
 
 # Function for Feed Table
 def add_feed(uid: int, post_id: int, date: datetime):
-    feed_data = get_feed_by_uid(uid)
-    if feed_data is None:
-        post = Feed(uid, post_id, date)
-        database.session.add(post)
-        database.session.commit()
-
+    post = Feed(uid, post_id, date)
+    database.session.add(post)
+    database.session.commit()
     return "Feed added"
 
 

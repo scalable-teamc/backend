@@ -19,7 +19,7 @@ class Feed(database.Model):
     post_id = database.Column(database.Integer())
     date = database.Column(database.DateTime())
 
-    def __int__(self, uid, post_id, date):
+    def __init__(self, uid, post_id, date):
         self.uid = uid
         self.post_id = post_id
         self.date = date
