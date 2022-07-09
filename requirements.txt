@@ -9,3 +9,4 @@ flask-login
 sqlalchemy_utils
 flask_cors
 flask_socketio
+eventlet

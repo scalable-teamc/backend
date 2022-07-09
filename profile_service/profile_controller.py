@@ -102,10 +102,8 @@ def get_follow_info():
     return json.dumps(res)
 
 
-@profile_controller.route("/profile/getshort", methods=["GET"])
-def get_short():
-    data = request.json
-    uid: int = data["uid"]
+@profile_controller.route("/profile/getshort/<int:uid>", methods=["GET"])
+def get_short(uid):
     profile = get_profile_by_id(uid)
 
     display_name = profile.display_name
