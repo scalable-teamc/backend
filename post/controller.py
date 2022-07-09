@@ -66,7 +66,7 @@ def post_api():
 
         save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
 
-    return "Post created\n", 200  # return JSON data ID
+    return str(new_paste.postID), 200  # return JSON data ID
 
 # Helper function for post_api()
 def save_image(username_bucket, postID, image_file, ctype):
