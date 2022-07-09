@@ -11,6 +11,7 @@ class UserProfile(database.Model):
     description = database.Column(database.Text())
     follower = database.Column(database.ARRAY(database.Integer), default="{}")
     following = database.Column(database.ARRAY(database.Integer), default="{}")
+    post_id_archive = database.Column(database.ARRAY(database.Integer), default="{}")
 
     def __init__(self, uid, username, display_name, description):
         self.uid = uid

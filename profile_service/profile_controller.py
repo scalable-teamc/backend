@@ -88,3 +88,19 @@ def unfollow():
     remove_follower_response = remove_follower(remove_id, uid)
     logging.info(remove_follower_response["message"])
     return {"success": True}
+
+
+@profile_controller.route("/profile/savedPost/", methods=['POST'])
+def saved_post_controller():
+    data = request.json
+    uid: int = data["uid"]
+    post_id: int = data["post_id"]
+    return save_post(uid, post_id)
+
+
+@profile_controller.route("/profile/unsavedPost/", methods=['PATCH'])
+def unsaved_post_controller():
+    data = request.json
+    uid: int = data["uid"]
+    post_id: int = data["post_id"]
+    return unsaved_post(uid, post_id)

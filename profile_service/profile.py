@@ -114,6 +114,32 @@ def remove_follower(user_id: int, remove_id: int) -> dict:
     return {"success": True, "message": "Finish remove ID:{} from ID:{} follower list".format(remove_id, user_id)}
 
 
+def save_post(user_id: int, post_id: int) -> dict:
+    profile: UserProfile = get_profile_by_id(user_id)
+    if post_id in profile.post_id_archive:
+        return {"success": True}
+    profile.post_id_archive.append(post_id)
+    flag_modified(profile, "post_id_archive")
+    database.session.merge(profile)
+    database.session.commit()
+    if post_id in profile.post_id_archive:
+        return {"success": True, "message": "Finish add Post:{} to User:{} archive".format(post_id, user_id)}
+    return {"success": False, "message": "Fail to add Post:{} to User:{} archive".format(post_id, user_id)}
+
+
+def unsaved_post(user_id: int, post_id: int) -> dict:
+    profile: UserProfile = get_profile_by_id(user_id)
+    if post_id not in profile.post_id_archive:
+        return {"success": True}
+    profile.post_id_archive.remove(post_id)
+    flag_modified(profile, "post_id_archive")
+    database.session.merge(profile)
+    database.session.commit()
+    if post_id not in profile.post_id_archive:
+        return {"success": True}
+    return {"success": False}
+
+
 def get_profile_by_id(profile_id: int) -> UserProfile:
     return database.session.query(UserProfile).filter_by(uid=profile_id).first()
 
