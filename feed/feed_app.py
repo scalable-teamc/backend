@@ -20,8 +20,11 @@ def handle_message(data):
 # Broadcast a message to all clients
 @socketio.on('broadcast_message')
 def handle_broadcast(data):
-    print('received: ' + str(data))
-    emit(data, {'data': data}, broadcast=True)
+    print('received')
+    print(data)
+    to = data['to']
+    post_id = data['postID']
+    emit(to, {'postID': post_id}, broadcast=True)
 
 
 @socketio.event
