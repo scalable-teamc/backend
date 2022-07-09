@@ -121,6 +121,7 @@ def get_short():
 
     return json.dumps(value)
 
+
 @profile_controller.route("/profile/savedPost/", methods=['POST'])
 def saved_post_controller():
     data = request.json
