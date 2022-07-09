@@ -100,3 +100,23 @@ def get_follow_info():
     follow = get_follow(uid)
     res = {"following": follow.following, "follower": follow.follower}
     return json.dumps(res)
+
+
+@profile_controller.route("/profile/getshort", methods=["GET"])
+def get_short():
+    data = request.json
+    uid: int = data["uid"]
+    profile = get_profile_by_id(uid)
+
+    display_name = profile.display_name
+    username = profile.username
+
+    picture = get_avatar(username)
+
+    value = {
+        "username": username,
+        "display_name": display_name,
+        "picture": picture
+    }
+
+    return json.dumps(value)
