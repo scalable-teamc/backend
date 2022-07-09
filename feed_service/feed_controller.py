@@ -1,7 +1,6 @@
 from flask import Flask, session
 from flask_cors import CORS
 from flask_socketio import SocketIO, send, emit
-import redis
 
 async_mode = None
 app = Flask(__name__)
