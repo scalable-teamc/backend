@@ -16,6 +16,7 @@ from storage import MINIO_CLIENT
 app = Flask(__name__)
 CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:password@localhost:5432/postgres" # "postgresql://postgres:postgres@postgres:5432/postgres" #
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 

@@ -8,6 +8,7 @@ from auth_service.auth_controller import auth_controller
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/user_db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "super secret key"
 
 login_manager = LoginManager()
