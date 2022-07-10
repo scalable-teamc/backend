@@ -120,7 +120,7 @@ def get_short(uid):
     return json.dumps(value)
 
 
-@profile_controller.route("/profile/savedPost/", methods=['POST'])
+@profile_controller.route("/profile/savedPost", methods=['POST'])
 def saved_post_controller():
     data = request.json
     uid: int = data["uid"]
@@ -128,9 +128,17 @@ def saved_post_controller():
     return save_post(uid, post_id)
 
 
-@profile_controller.route("/profile/unsavedPost/", methods=['PATCH'])
+@profile_controller.route("/profile/unsavedPost", methods=['PATCH'])
 def unsaved_post_controller():
     data = request.json
     uid: int = data["uid"]
     post_id: int = data["post_id"]
     return unsaved_post(uid, post_id)
+
+
+@profile_controller.route("/profile/archive", methods=['POST'])
+def get_archive():
+    data = request.json
+    uid: int = data["uid"]
+    profile = get_profile_by_id(uid)
+    return json.dumps(profile.post_id_archive)
