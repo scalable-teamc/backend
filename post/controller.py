@@ -15,7 +15,8 @@ from storage import MINIO_CLIENT
 
 app = Flask(__name__)
 CORS(app)
-app.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://postgres:password@localhost:5432/postgres" # "postgresql://postgres:postgres@postgres:5432/postgres" #
+app.config[
+    "SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:password@localhost:5432/postgres"  # "postgresql://postgres:postgres@postgres:5432/postgres" #
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -59,7 +60,6 @@ def post_api():
     # Saving media (If there's no image, json_data['image'] == None)
     image = json_data['image']
     if image is not None:
-
         username = json_data["username"]
         id_of_post = str(new_paste.to_dict()["postID"])
         image = json_data["image"]
@@ -68,6 +68,7 @@ def post_api():
         save_image(username_bucket=username, postID=id_of_post, image_file=image, ctype=ctype)
 
     return str(new_paste.postID), 200  # return JSON data ID
+
 
 # Helper function for post_api()
 def save_image(username_bucket, postID, image_file, ctype):
@@ -80,10 +81,10 @@ def save_image(username_bucket, postID, image_file, ctype):
     img = io.BytesIO(img)
 
     # Save image to MINIO. Image name will be <postID>_image.ext
-    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size, content_type=ctype)
+    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size,
+                            content_type=ctype)
     return ext
     # return username_bucket, postID, image_file, ctype
-
 
 
 # Get specific post (postID identifier for each Tweet)
@@ -102,12 +103,13 @@ def get_api(postID):
 
     return final, 200
 
+
 # Helper function for get_api() and recent_api()
 def get_image(username_bucket, postID):
     content = ""
     content_type = ""
     # Get picture from MINIO
-    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=str(postID)+"_image"):
+    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=str(postID) + "_image"):
         if obj is None:
             return None
         pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
@@ -136,6 +138,15 @@ def recent_api():
 
         arr.append(aPost)
     return {"lst": arr}, 200
+
+
+@app.route('/user-post/<int:uid>', methods=['GET'])
+def get_user_post(uid):
+    query = PasteModel.query.filter_by(userID=uid).order_by(PasteModel.createdAt).all()
+    ret = []
+    for row in query:
+        ret.append(row.postID)
+    return json.dumps(ret)
 
 
 if __name__ == "__main__":
