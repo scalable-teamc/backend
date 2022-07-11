@@ -21,10 +21,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+
+
+
+###################
+# Model
+###################
+
 class PasteModel(db.Model):
     postID = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     userID = db.Column(db.Integer())
     username = db.Column(db.String())
+    likedUser = db.Column(db.ARRAY(db.Integer))
     content = db.Column(db.String())
     createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow())  # .now()
 
@@ -34,24 +42,32 @@ class PasteModel(db.Model):
             "postID": self.postID,
             "userID": self.userID,
             "username": self.username,
+            "likedUser": self.likedUser,
             "content": self.content,
             "createdAt": self.createdAt
         }
-
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
 
+
+
+
+
+###################
+# Routes
+###################
+
 # Taking data from user, create post, and store it
-# Parameters needed in incoming request: (userID, content, image, type, username)
-# What is kept in DB: (userID, content, postID, createAt)
+# Parameters needed in incoming request: (userID, content, image, type, username, likedUser)
+# What is kept in DB: (userID, content, postID, createAt, username, likedUser)
 @app.route('/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
 
-    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser=json_data["likedUser"], content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
@@ -70,23 +86,6 @@ def post_api():
     return str(new_paste.postID), 200  # return JSON data ID
 
 
-# Helper function for post_api()
-def save_image(username_bucket, postID, image_file, ctype):
-    if ctype == "":
-        return
-
-    img = base64.b64decode(bytes(image_file, 'utf-8'))
-    ext = '.' + ctype.split('/')[1]
-    size = len(img)
-    img = io.BytesIO(img)
-
-    # Save image to MINIO. Image name will be <postID>_image.ext
-    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size,
-                            content_type=ctype)
-    return ext
-    # return username_bucket, postID, image_file, ctype
-
-
 # Get specific post (postID identifier for each Tweet)
 # Response dict will contain: (userID, content, image, postID, createAt)
 # image is not kept in DB, but fetched from MINIO upon every get request
@@ -102,23 +101,6 @@ def get_api(postID):
     final["image"] = get_image(username, final["postID"])
 
     return final, 200
-
-
-# Helper function for get_api() and recent_api()
-def get_image(username_bucket, postID):
-    content = ""
-    content_type = ""
-    # Get picture from MINIO
-    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=str(postID) + "_image"):
-        if obj is None:
-            return None
-        pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
-        content = base64.b64encode(pic.read()).decode('utf-8')
-        ext = obj.object_name.split('.')[1]
-        # content_type = "data:" + obj.content_type + ";base64,"
-        content_type = "data:" + ext + ";base64,"
-    return content_type + content
-    # return str(username_bucket) + "_IMAGEIMAGE"
 
 
 # Show most recent tweets
@@ -149,12 +131,69 @@ def get_user_post(uid):
     return json.dumps(ret)
 
 
+# Parameters needed in incoming request: (postID, userID)
+@app.route('/like', methods=['POST'])
+def like_post():
+    # Get post
+    json_data = request.get_json()
+    post = PasteModel.query.filter_by(postID=json_data["postID"]).first()
+    if not post:
+        return "postID not found\n", 404
+
+    # Updates post
+    post.likedUser = post.likedUser + [json_data["userID"]]
+    db.session.commit()
+
+    return "New Like!\n", 200
+
+
+
+
+
+###################
+# HELPER FUNCTIONS
+###################
+
+# Helper function for post_api()
+def save_image(username_bucket, postID, image_file, ctype):
+    if ctype == "":
+        return
+
+    img = base64.b64decode(bytes(image_file, 'utf-8'))
+    ext = '.' + ctype.split('/')[1]
+    size = len(img)
+    img = io.BytesIO(img)
+
+    # Save image to MINIO. Image name will be <postID>_image.ext
+    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=postID + "_image" + ext, data=img, length=size,
+                            content_type=ctype)
+    return ext
+    # return username_bucket, postID, image_file, ctype
+
+# Helper function for get_api() and recent_api()
+def get_image(username_bucket, postID):
+    content = ""
+    content_type = ""
+    # Get picture from MINIO
+    for obj in MINIO_CLIENT.list_objects(bucket_name=username_bucket, prefix=str(postID) + "_image"):
+        if obj is None:
+            return None
+        pic = MINIO_CLIENT.get_object(bucket_name=username_bucket, object_name=obj.object_name)
+        content = base64.b64encode(pic.read()).decode('utf-8')
+        ext = obj.object_name.split('.')[1]
+        # content_type = "data:" + obj.content_type + ";base64,"
+        content_type = "data:" + ext + ";base64,"
+    return content_type + content
+    # return str(username_bucket) + "_IMAGEIMAGE"
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5466)
 
 # Testing for 
 # POST:
-# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "username": "JackSparrow", "content": "Today is TESRTx" }'
-# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "username": "JackSparrow", "content": "Today is TESRTx", "image": null }'
+# curl -X POST http://127.0.0.1:5466/post -H 'Content-Type: application/json' -d '{ "userID": 777865, "username": "JackSparrow", "likedUser": [56, 6, 9906], "content": "Today is TESRTx", "image": null }'
 # GET:
 # curl -X GET http://127.0.0.1:5466/get/1
+# LIKE:
+# curl -X POST http://127.0.0.1:5466/like -H 'Content-Type: application/json' -d '{ "userID": 432, "postID": 1 }'
