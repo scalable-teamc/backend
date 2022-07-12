@@ -67,7 +67,7 @@ def create_tables():
 def post_api():
     json_data = request.get_json()
 
-    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser="", content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser=json_data["likedUser"], content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
@@ -102,6 +102,29 @@ def get_api(postID):
 
     return final, 200
 
+# Get specific post AND whether the user liked the requested post
+# Response dict will contain: (userID, content, image, postID, createAt)
+# image is not kept in DB, but fetched from MINIO upon every get request
+@app.route('/get/<int:postID>/<int:userID>', methods=['GET'])
+def get_api_user_liked(postID, userID):
+    result = PasteModel.query.filter_by(postID=postID).first()
+    if not result:
+        return "postID not found\n", 404
+    final = result.to_dict()
+
+    # Fetch media and add in new parameters
+    username = final["username"]
+    final["image"] = get_image(username, final["postID"])
+
+    didUserLike = False
+    if userID in final["likedUser"]:
+        didUserLike = True
+
+    return {
+            "post": final , 
+            "didUserLike": didUserLike
+            }, 200
+
 
 # Show most recent tweets
 @app.route('/recent', methods=['POST'])
@@ -130,7 +153,7 @@ def get_user_post(uid):
         ret.append(row.postID)
     return json.dumps(ret)
 
-
+# Add userID to a post's likedUser array
 # Parameters needed in incoming request: (postID, userID)
 @app.route('/like', methods=['POST'])
 def like_post():
@@ -146,6 +169,7 @@ def like_post():
 
     return "New Like!\n", 200
 
+# Remove userID from a post's likedUser array
 # Parameters needed in incoming request: (postID, userID)
 @app.route('/unlike', methods=['POST'])
 def unlike_post():
