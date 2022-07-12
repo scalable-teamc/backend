@@ -10,3 +10,4 @@ sqlalchemy_utils
 flask_cors
 flask_socketio
 eventlet
+redis
