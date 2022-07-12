@@ -146,6 +146,28 @@ def like_post():
 
     return "New Like!\n", 200
 
+# Parameters needed in incoming request: (postID, userID)
+@app.route('/unlike', methods=['POST'])
+def unlike_post():
+    # Get post
+    json_data = request.get_json()
+    post = PasteModel.query.filter_by(postID=json_data["postID"]).first()
+    if not post:
+        return "postID not found\n", 404
+
+    # Updates post
+    target = json_data["userID"]
+    if target in post.likedUser:
+        newArr = post.likedUser[:]
+        newArr.remove(target)
+        post.likedUser = newArr
+    else:
+        return "userID hasn't liked this post\n", 404
+    
+    db.session.commit()
+
+    return "Unliked!\n", 200
+
 
 
 
