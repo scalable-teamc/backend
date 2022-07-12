@@ -34,7 +34,7 @@ class PasteModel(db.Model):
     username = db.Column(db.String())
     likedUser = db.Column(db.ARRAY(db.Integer))
     content = db.Column(db.String())
-    createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow())  # .now()
+    createdAt = db.Column(db.DateTime(), nullable=False, default=datetime.now)  # .now()
 
     # Return as dict to be send over HTTP response
     def to_dict(self):
@@ -67,7 +67,7 @@ def create_tables():
 def post_api():
     json_data = request.get_json()
 
-    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser=json_data["likedUser"], content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser="", content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)

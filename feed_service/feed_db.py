@@ -1,4 +1,5 @@
 from feed_service import feed_db as database
+from datetime import datetime
 
 
 class Online(database.Model):
@@ -17,7 +18,7 @@ class Feed(database.Model):
     id = database.Column(database.Integer, primary_key=True, autoincrement=True)
     uid = database.Column(database.Integer())
     post_id = database.Column(database.Integer())
-    date = database.Column(database.DateTime())
+    date = database.Column(database.DateTime(), default=datetime.now)
 
     def __init__(self, uid, post_id, date):
         self.uid = uid

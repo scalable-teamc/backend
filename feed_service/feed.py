@@ -1,6 +1,6 @@
 from feed_service import feed_db as database
 from feed_db import Feed, Online
-import datetime
+from datetime import datetime
 
 
 # Function for Online Table
