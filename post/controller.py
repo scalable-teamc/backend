@@ -21,9 +21,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-
-
-
 ###################
 # Model
 ###################
@@ -47,13 +44,10 @@ class PasteModel(db.Model):
             "createdAt": self.createdAt
         }
 
+
 @app.before_first_request
 def create_tables():
     db.create_all()
-
-
-
-
 
 
 ###################
@@ -67,7 +61,8 @@ def create_tables():
 def post_api():
     json_data = request.get_json()
 
-    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser=json_data["likedUser"], content=json_data["content"])
+    new_paste = PasteModel(userID=json_data["userID"], username=json_data["username"], likedUser="",
+                           content=json_data["content"])
 
     # Sent json_data to database
     db.session.add(new_paste)
@@ -102,6 +97,7 @@ def get_api(postID):
 
     return final, 200
 
+
 # Get specific post AND whether the user liked the requested post
 # Response dict will contain: (userID, content, image, postID, createAt)
 # image is not kept in DB, but fetched from MINIO upon every get request
@@ -120,10 +116,9 @@ def get_api_user_liked(postID, userID):
     if userID in final["likedUser"]:
         didUserLike = True
 
-    return {
-            "post": final , 
-            "didUserLike": didUserLike
-            }, 200
+    final["isLiked"] = didUserLike
+
+    return final, 200
 
 
 # Show most recent tweets
@@ -153,6 +148,7 @@ def get_user_post(uid):
         ret.append(row.postID)
     return json.dumps(ret)
 
+
 # Add userID to a post's likedUser array
 # Parameters needed in incoming request: (postID, userID)
 @app.route('/like', methods=['POST'])
@@ -168,6 +164,7 @@ def like_post():
     db.session.commit()
 
     return "New Like!\n", 200
+
 
 # Remove userID from a post's likedUser array
 # Parameters needed in incoming request: (postID, userID)
@@ -187,13 +184,10 @@ def unlike_post():
         post.likedUser = newArr
     else:
         return "userID hasn't liked this post\n", 404
-    
+
     db.session.commit()
 
     return "Unliked!\n", 200
-
-
-
 
 
 ###################
@@ -215,6 +209,7 @@ def save_image(username_bucket, postID, image_file, ctype):
                             content_type=ctype)
     return ext
     # return username_bucket, postID, image_file, ctype
+
 
 # Helper function for get_api() and recent_api()
 def get_image(username_bucket, postID):
