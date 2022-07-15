@@ -19,9 +19,8 @@ def save_avatar(username_bucket, image_file, ctype):
     img = io.BytesIO(img)
 
     # Save profile picture to MINIO
-    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=username_bucket +
-                                                                     "_avatar" + ext, data=img, length=size,
-                            content_type=ctype)
+    MINIO_CLIENT.put_object(bucket_name=username_bucket, object_name=username_bucket + "_avatar" + ext, data=img,
+                            length=size, content_type=ctype)
 
     return ext
 

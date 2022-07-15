@@ -49,4 +49,4 @@ def remove_feed(uid: int):
 
 # Function for Feed Table
 def get_feed_by_uid(uid: int, offset: int):
-    return database.session.query(Feed).filter_by(uid=uid).order_by(Feed.date.desc()).limit(10+offset).offset(offset).all()
+    return database.session.query(Feed).filter_by(uid=uid).order_by(Feed.date.desc()).limit(10).offset(offset).all()

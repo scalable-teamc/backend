@@ -142,7 +142,7 @@ def recent_api():
 
 @app.route('/user-post/<int:uid>', methods=['GET'])
 def get_user_post(uid):
-    query = PasteModel.query.filter_by(userID=uid).order_by(PasteModel.createdAt).all()
+    query = PasteModel.query.filter_by(userID=uid).order_by(PasteModel.createdAt.desc()).all()
     ret = []
     for row in query:
         ret.append(row.postID)

@@ -43,6 +43,7 @@ def get_all_feed():
     ret = []
     for feed in get_feed_by_uid(uid, offset):
         ret.append(feed.post_id)
+    print(ret)
     return json.dumps(ret)
 
 # @socketio.on('online')
