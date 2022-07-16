@@ -26,9 +26,9 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --file auth_service/Dockerfile \
-        --tag ghcr.io/${{ env.BASE_IMG_NAME }}/[Image_name]:${{ steps.vars.outputs.sha_short }} \
-        --tag ghcr.io/${{ env.BASE_IMG_NAME }}/[Image_name]:latest
+        --tag ghcr.io/${{ env.BASE_IMG_NAME }}/auth:${{ steps.vars.outputs.sha_short }} \
+        --tag ghcr.io/${{ env.BASE_IMG_NAME }}/auth:latest
     - name: Publish the images
       run: |
-        docker push ghcr.io/${{ env.BASE_IMG_NAME }}/[Image_name]:${{ steps.vars.outputs.sha_short }}
-        docker push ghcr.io/${{ env.BASE_IMG_NAME }}/[Image_name]:latest
+        docker push ghcr.io/${{ env.BASE_IMG_NAME }}/auth:${{ steps.vars.outputs.sha_short }}
+        docker push ghcr.io/${{ env.BASE_IMG_NAME }}/auth:latest
