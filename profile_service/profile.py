@@ -5,7 +5,7 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from profile_account import UserProfile
 from profile_service import profile_db as database
-from storage import MINIO_CLIENT
+from . import MINIO_CLIENT
 
 
 # Take picture and save to minio
