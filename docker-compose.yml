@@ -27,6 +27,45 @@ services:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
+  auth_service:
+    depends_on:
+      - db
+      - minio
+    build: ./auth_service
+    volumes:
+      - ./auth_service:/auth/src
+    ports:
+      - '8082:8082'
+    restart: always
+  profile_service:
+    depends_on:
+      - db
+      - minio
+    build: ./profile_service
+    volumes:
+      - ./profile_service:/profile/src
+    ports:
+      - '8084:8084'
+    restart: always
+  post_service:
+    depends_on:
+      - db
+      - minio
+    build: ./post
+    volumes:
+      - ./post:/post/src
+    ports:
+      - '5466:5466'
+    restart: always
+  feed_service:
+    depends_on:
+      - db
+    build: ./feed_service
+    volumes:
+      - ./feed_service:/feed/src
+    ports:
+      - '5000:5000'
+    restart: always
 volumes:
   db:
     driver: local
