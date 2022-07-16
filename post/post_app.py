@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from post import post_db
-from post.controller import post_controller
+from post.post_controller import post_controller
 
 app = Flask(__name__)
 CORS(app)

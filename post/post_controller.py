@@ -1,7 +1,7 @@
 import json
-from flask import Blueprint, request
-from .post_db import *
-from post_helper import *
+from flask import Blueprint, request, Flask
+from post.post_db import *
+from post.post_helper import *
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import base64
@@ -9,7 +9,6 @@ from datetime import datetime
 import psycopg2
 import io
 import os
-from flask import Flask, request
 
 
 post_controller = Blueprint('post_controller', __name__)

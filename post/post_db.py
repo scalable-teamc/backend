@@ -1,6 +1,5 @@
 from post import post_db as db
 from datetime import datetime
-from post_app import app
 
 
 class PasteModel(db.Model):
@@ -22,7 +21,3 @@ class PasteModel(db.Model):
             "createdAt": self.createdAt
         }
 
-
-@app.before_first_request
-def create_tables():
-    db.create_all()

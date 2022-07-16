@@ -11,7 +11,7 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 RUN pip install --upgrade pip
 
 COPY ./post/__init__.py .
-COPY ./post/controller.py .
+COPY ./post/post_controller.py .
 COPY ./post/post_app.py .
 COPY ./post/post_db.py .
 COPY ./post/post_helper.py .
