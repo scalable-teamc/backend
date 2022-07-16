@@ -1,7 +1,5 @@
 from flask_login import login_user
-
-from storage import MINIO_CLIENT
-from . import user_db as database
+from . import user_db as database, MINIO_CLIENT
 from .user_account import UserAccount
 
 
@@ -25,7 +23,7 @@ def register(username: str, password: str):
     database.session.commit()
     database.session.refresh(new_user)
     if user_exist(username):
-        MINIO_CLIENT.make_bucket(str(new_user.id))
+        MINIO_CLIENT.make_bucket(username)
         return {"success": True, "uid": new_user.id, "message": f"User {username} has been created successfully."}
     return {"success": False, "message": f" Fail to create User {username}."}
 
