@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-WORKDIR /usr/src
+WORKDIR /profile/src
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -18,3 +18,5 @@ COPY ./profile_service/profile_controller.py .
 COPY ./profile_service/requirements.txt .
 
 RUN pip install -r requirements.txt
+
+CMD [ "flask", "run", "profile_app.py" ]

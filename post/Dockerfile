@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-WORKDIR /usr/src
+WORKDIR /post/src
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -18,3 +18,5 @@ COPY ./post/post_helper.py .
 COPY ./post/requirements.txt .
 
 RUN pip install -r requirements.txt
+
+CMD [ "flask", "run", "post_app.py" ]
