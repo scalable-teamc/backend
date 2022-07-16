@@ -10,10 +10,10 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 RUN pip install --upgrade pip
 
-COPY __init__.py .
-COPY feed.py .
-COPY feed_controller.py .
-COPY feed_db.py .
-COPY requirements.txt .
+COPY ./feed_service/__init__.py .
+COPY ./feed_service/feed.py .
+COPY ./feed_service/feed_controller.py .
+COPY ./feed_service/feed_db.py .
+COPY ./feed_service/requirements.txt .
 
 RUN pip install -r requirements.txt
