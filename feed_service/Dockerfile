@@ -10,12 +10,10 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 RUN pip install --upgrade pip
 
-COPY ./feed_service/__init__.py .
-COPY ./feed_service/feed.py .
-COPY ./feed_service/feed_controller.py .
-COPY ./feed_service/feed_db.py .
-COPY ./feed_service/requirements.txt .
+COPY . .
 
 RUN pip install -r requirements.txt
 
-CMD [ "flask", "run", "feed_controller.py" ]
+ENV FLASK_APP=feed_controller.py
+
+CMD [ "flask", "run" ]

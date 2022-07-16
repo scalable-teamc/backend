@@ -10,13 +10,10 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 RUN pip install --upgrade pip
 
-COPY ./profile_service/__init__.py .
-COPY ./profile_service/profile.py .
-COPY ./profile_service/profile_account.py .
-COPY ./profile_service/profile_app.py .
-COPY ./profile_service/profile_controller.py .
-COPY ./profile_service/requirements.txt .
+COPY . .
 
 RUN pip install -r requirements.txt
 
-CMD [ "flask", "run", "profile_app.py" ]
+ENV FLASK_APP=profile_app.py
+
+CMD [ "flask", "run" ]

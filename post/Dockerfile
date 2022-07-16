@@ -10,13 +10,10 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 RUN pip install --upgrade pip
 
-COPY ./post/__init__.py .
-COPY ./post/post_controller.py .
-COPY ./post/post_app.py .
-COPY ./post/post_db.py .
-COPY ./post/post_helper.py .
-COPY ./post/requirements.txt .
+COPY . .
 
 RUN pip install -r requirements.txt
 
-CMD [ "flask", "run", "post_app.py" ]
+ENV FLASK_APP=post_app.py
+
+CMD [ "flask", "run" ]
