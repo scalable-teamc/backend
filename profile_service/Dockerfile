@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-WORKDIR /profile/src
+WORKDIR /profile_service/
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
