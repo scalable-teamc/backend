@@ -12,6 +12,9 @@ RUN pip install --upgrade pip
 
 COPY __init__.py .
 COPY controller.py .
+COPY post_app.py .
+COPY post_db.py .
+COPY post_helper.py .
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
