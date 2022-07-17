@@ -54,10 +54,11 @@ def set_online(uid):
     add_online(uid, request.sid)
 
 
-# @socketio.on('offline')
-# def set_offline(uid):
-#     print('disconnected')
-#     remove_online(uid)
+@socketio.on('logout')
+def set_offline():
+    print('Logged out')
+    remove_online(request.sid)
+
 
 @socketio.event
 def disconnect():
