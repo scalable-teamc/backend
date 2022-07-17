@@ -22,12 +22,14 @@ socketio.init_app(app, message_queue='redis://127.0.0.1:6379', cors_allowed_orig
 # Broadcast a message to all clients
 @socketio.on('broadcast_message')
 def handle_broadcast(data):
-    print('received')
     print(data)
     to = data['to']
     post_id = data['postID']
     add_feed(to, post_id, data['date'])
-    emit(to, {'postID': post_id}, broadcast=True)
+    for online in get_online_by_uid(to):
+        if to == online.uid:
+            print(to)
+            emit(to, {'postID': post_id}, broadcast=True)
 
 
 @socketio.event
@@ -43,12 +45,13 @@ def get_all_feed():
     ret = []
     for feed in get_feed_by_uid(uid, offset):
         ret.append(feed.post_id)
-    print(ret)
     return json.dumps(ret)
 
-# @socketio.on('online')
-# def set_online(uid):
-#     add_online(uid)
+
+@socketio.on('online')
+def set_online(uid):
+    print(request.sid)
+    add_online(uid, request.sid)
 
 
 # @socketio.on('offline')
@@ -56,9 +59,11 @@ def get_all_feed():
 #     print('disconnected')
 #     remove_online(uid)
 
-# @socketio.event
-# def disconnect():
-#     print("Disconnected")
+@socketio.event
+def disconnect():
+    remove_online(request.sid)
+    print(request.sid)
+    print("Disconnected")
 
 
 if __name__ == '__main__':

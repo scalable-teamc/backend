@@ -4,10 +4,10 @@ from datetime import datetime
 
 
 # Function for Online Table
-def add_online(uid: int):
+def add_online(uid: int, sid: str):
     # online_data = get_online_by_uid(uid)
     # if online_data is None:
-    user = Online(uid)
+    user = Online(uid, sid)
     database.session.add(user)
     database.session.commit()
 
@@ -15,18 +15,22 @@ def add_online(uid: int):
 
 
 # Function for Online Table
-def remove_online(uid: int):
-    online_data = get_online_by_uid(uid)
+def remove_online(sid: int):
+    online_data = get_online_by_sid(sid)
     if online_data:
-        database.session.query(Online).filter_by(uid=uid).delete()
+        database.session.query(Online).filter_by(sid=sid).delete()
         database.session.commit()
 
     return "Deleted"
 
 
 # Function for Online Table
+def get_online_by_sid(sid: int):
+    return database.session.query(Online).filter_by(sid=sid).first()
+
+
 def get_online_by_uid(uid: int):
-    return database.session.query(Online).filter_by(uid=uid).first()
+    return database.session.query(Online).filter_by(uid=uid).all()
 
 
 # Function for Feed Table
