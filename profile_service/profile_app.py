@@ -17,4 +17,6 @@ if __name__ == '__main__':
         profile_db.session.commit()
     app.register_blueprint(profile_controller)
     # run app in debug mode on port 8084
-    app.run(debug=True, port=8084)
+    # app.run(debug=True, port=8084)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8084)

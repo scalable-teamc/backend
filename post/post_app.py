@@ -16,4 +16,6 @@ if __name__ == "__main__":
         post_db.create_all()
         post_db.session.commit()
     app.register_blueprint(post_controller)
-    app.run(host='0.0.0.0', port=5466)
+    # app.run(host='0.0.0.0', port=5466)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=5466)

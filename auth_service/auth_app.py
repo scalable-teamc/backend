@@ -27,4 +27,6 @@ if __name__ == '__main__':
     app.register_blueprint(auth_controller)
 
     # run app in debug mode on port 8082
-    app.run(debug=True, port=8082)
+    # app.run(debug=True, port=8082)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8082)

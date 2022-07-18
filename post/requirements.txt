@@ -10,3 +10,4 @@ flask_cors
 flask_socketio
 eventlet
 redis
+waitress
