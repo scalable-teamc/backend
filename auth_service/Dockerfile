@@ -1,10 +1,10 @@
 FROM python:3.9-slim
 
-WORKDIR /usr/src/auth_service
+WORKDIR /usr/src
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/auth_service"
+ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
 
 
 RUN apt-get update
@@ -12,12 +12,12 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 RUN pip install --upgrade pip
 
-COPY ./auth_service/auth_app.py .
-COPY ./auth_service/__init__.py .
-COPY ./auth_service/auth_controller.py .
-COPY ./auth_service/auth_svc.py .
-COPY ./auth_service/user_account.py .
-COPY ./auth_service/requirements.txt .
+COPY ./auth_service/auth_app.py ./auth_service
+COPY ./auth_service/__init__.py ./auth_service
+COPY ./auth_service/auth_controller.py ./auth_service
+COPY ./auth_service/auth_svc.py ./auth_service
+COPY ./auth_service/user_account.py ./auth_service
+COPY ./auth_service/requirements.txt ./auth_service
 
 RUN pip install -r requirements.txt
 

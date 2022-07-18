@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_cors import CORS
-from . import user_db
+from auth_service import user_db
 import auth_controller
 import os
 

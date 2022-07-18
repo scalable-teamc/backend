@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from .auth_svc import *
+from auth_svc import *
 
 auth_controller = Blueprint('auth_controller', __name__)
 
