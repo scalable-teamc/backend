@@ -26,8 +26,10 @@ def handle_broadcast(data):
     to = data['to']
     post_id = data['postID']
     add_feed(to, post_id, data['date'])
+    sent = []
     for online in get_online_by_uid(to):
-        if to == online.uid:
+        if (to == online.uid) and (to not in sent):
+            sent.append(to)
             print(to)
             emit(to, {'postID': post_id}, broadcast=True)
 
