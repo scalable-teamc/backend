@@ -17,9 +17,9 @@ COPY ./auth_service/__init__.py ./auth_service
 COPY ./auth_service/auth_controller.py ./auth_service
 COPY ./auth_service/auth_svc.py ./auth_service
 COPY ./auth_service/user_account.py ./auth_service
-COPY ./auth_service/requirements.txt ./auth_service
+COPY ./auth_service/requirements.txt .
 
-RUN pip install -r ./auth_service/requirements.txt
+RUN pip install -r requirements.txt
 
 
 # ENV FLASK_APP=auth_app.py
