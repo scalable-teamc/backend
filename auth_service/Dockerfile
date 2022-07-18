@@ -4,6 +4,8 @@ WORKDIR /usr/src/auth_service
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH "${PYTHONPATH}:/usr/src/auth_service"
+
 
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
@@ -18,6 +20,7 @@ COPY ./auth_service/user_account.py .
 COPY ./auth_service/requirements.txt .
 
 RUN pip install -r requirements.txt
+
 
 # ENV FLASK_APP=auth_app.py
 

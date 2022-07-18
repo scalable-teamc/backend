@@ -1,5 +1,6 @@
 from flask_login import login_user
-from . import user_db as database, MINIO_CLIENT
+from . import user_db as database
+from . import MINIO_CLIENT
 from .user_account import UserAccount
 
 
