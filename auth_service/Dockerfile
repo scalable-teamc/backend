@@ -14,6 +14,6 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-ENV FLASK_APP=auth_app.py
+# ENV FLASK_APP=auth_app.py
 
-CMD [ "flask", "run"]
+CMD [ "python", "auth_app.py"]

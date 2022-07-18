@@ -14,6 +14,6 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-ENV FLASK_APP=feed_controller.py
+# ENV FLASK_APP=feed_controller.py
 
-CMD [ "flask", "run" ]
+CMD [ "python", "feed_controller.py" ]
