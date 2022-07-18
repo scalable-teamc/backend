@@ -6,10 +6,12 @@ class Online(database.Model):
     __tablename__ = 'online'
 
     id = database.Column(database.Integer, primary_key=True, autoincrement=True)
-    uid = database.Column(database.Integer(), unique=True)
+    uid = database.Column(database.Integer())
+    sid = database.Column(database.String, unique=True)
 
-    def __init__(self, uid):
+    def __init__(self, uid, sid):
         self.uid = uid
+        self.sid = sid
 
 
 class Feed(database.Model):
