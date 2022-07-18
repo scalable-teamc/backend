@@ -3,7 +3,7 @@ import logging
 
 from flask import Blueprint, request
 
-from .profile import *
+from profile_service.profile import *
 
 profile_controller = Blueprint('profile_controller', __name__)
 
