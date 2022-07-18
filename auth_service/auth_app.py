@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-
 from flask import Flask
 from flask_login import LoginManager
 from flask_cors import CORS
 from auth_service import user_db
-from auth_service.auth_controller import auth_controller
+import auth_controller
 import os
 
 url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ["POSTGRES_PASSWORD"] \

@@ -21,4 +21,4 @@ RUN pip install -r requirements.txt
 
 # ENV FLASK_APP=auth_app.py
 
-CMD [ "python", "auth_app.py"]
+# CMD [ "python", "auth_app.py"]
