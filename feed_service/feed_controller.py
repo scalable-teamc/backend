@@ -4,11 +4,14 @@ from flask_socketio import SocketIO, emit
 from feed import *
 from feed_init import feed_db
 from flask_cors import CORS
+import os
+url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ[
+    "POSTGRES_PASSWORD"] + "@" + os.environ["POSTGRES_DB"] + "/feed_db"
 
 # async_mode = None
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/feed_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 feed_db.init_app(app)
 with app.app_context():
