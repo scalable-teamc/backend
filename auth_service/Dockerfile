@@ -5,7 +5,6 @@ WORKDIR /usr/src
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 

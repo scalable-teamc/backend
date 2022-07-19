@@ -1,4 +1,4 @@
-from post import post_db as db
+from post_init import post_db as db
 from datetime import datetime
 
 

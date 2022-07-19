@@ -1,7 +1,6 @@
-from . import MINIO_CLIENT
 import base64
 import io
-from . import MINIO_CLIENT
+from post_init import MINIO_CLIENT
 
 
 def save_image(username_bucket, postID, image_file, ctype):

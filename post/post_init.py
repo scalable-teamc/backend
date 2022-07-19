@@ -5,13 +5,13 @@ from minio import Minio
 import os
 
 url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ[
-    "POSTGRES_PASSWORD"] + "@" + os.environ["POSTGRES_DB"] + "/user_db"
+    "POSTGRES_PASSWORD"] + "@" + os.environ["POSTGRES_DB"] + "/post_db"
 
 db_engine = sqlalchemy.create_engine(url)
 if not database_exists(db_engine.url):
     create_database(db_engine.url)
 
-user_db = SQLAlchemy()
+post_db = SQLAlchemy()
 
 ACCESS_KEY = os.environ.get('MINIO_ACCESS_KEY')
 SECRET_KEY = os.environ.get('MINIO_SECRET_KEY')

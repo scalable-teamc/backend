@@ -3,10 +3,14 @@ from flask_cors import CORS
 
 from profile_init import profile_db
 from profile_controller import profile_controller
+import os
+
+url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ["POSTGRES_PASSWORD"] \
+      + "@" + os.environ["POSTGRES_DB"] + "/profile_db"
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/profile_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
