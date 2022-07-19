@@ -13,7 +13,7 @@ RUN pip install --upgrade pip
 COPY ./feed_service/feed.py .
 COPY ./feed_service/feed_controller.py .
 COPY ./feed_service/feed_db.py .
-COPY ./feed_service/feed_init .
+COPY ./feed_service/feed_init.py .
 COPY ./feed_service/requirements.txt .
 
 RUN pip install -r requirements.txt
