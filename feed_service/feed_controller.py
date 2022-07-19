@@ -1,9 +1,8 @@
 import json
-
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
 from feed import *
-from feed_service import feed_db
+from feed_init import feed_db
 from flask_cors import CORS
 
 # async_mode = None

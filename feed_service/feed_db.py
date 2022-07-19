@@ -1,4 +1,4 @@
-from feed_service import feed_db as database
+from feed_init import feed_db as database
 from datetime import datetime
 
 
