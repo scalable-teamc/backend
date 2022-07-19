@@ -2,7 +2,6 @@ import sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import create_database, database_exists
 from minio import Minio
-from auth_service import auth_controller, auth_app, auth_svc, user_account
 import os
 
 url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ[
