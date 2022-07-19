@@ -14,7 +14,7 @@ COPY ./profile_service/profile_account.py .
 COPY ./profile_service/profile_app.py .
 COPY ./profile_service/profile_controller.py .
 COPY ./profile_service/profile_init.py .
-COPY ./profile_service/profile_svc .
+COPY ./profile_service/profile_svc.py .
 COPY ./profile_service/requirements.txt .
 
 RUN pip install -r requirements.txt
