@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_cors import CORS
 from auth_init import user_db
-import auth_controller
+from auth_controller import auth_controller
 import os
 
 url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ["POSTGRES_PASSWORD"] \
@@ -23,7 +23,6 @@ if __name__ == '__main__':
         user_db.session.commit()
     login_manager.init_app(app)
     app.register_blueprint(auth_controller)
-
     # run app in debug mode on port 8082
     # app.run(debug=True, port=8082)
     from waitress import serve
