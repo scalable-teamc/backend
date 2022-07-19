@@ -1,11 +1,10 @@
 import base64
 import io
-
 from sqlalchemy.orm.attributes import flag_modified
 
 from profile_account import UserProfile
-from profile_service import profile_db as database
-from . import MINIO_CLIENT
+from profile_init import profile_db as database
+from profile_init import MINIO_CLIENT
 
 
 # Take picture and save to minio

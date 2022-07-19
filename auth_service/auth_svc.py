@@ -1,6 +1,6 @@
 from flask_login import login_user
-from auth_service import user_db as database
-from auth_service import MINIO_CLIENT
+from auth_init import user_db as database
+from auth_init import MINIO_CLIENT
 from user_account import UserAccount
 
 

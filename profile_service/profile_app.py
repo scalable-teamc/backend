@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 
-from profile_service import profile_db
-from profile_service.profile_controller import profile_controller
+from profile_init import profile_db
+from profile_controller import profile_controller
 
 app = Flask(__name__)
 CORS(app)

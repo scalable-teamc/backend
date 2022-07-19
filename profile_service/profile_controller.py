@@ -2,8 +2,7 @@ import json
 import logging
 
 from flask import Blueprint, request
-
-from .profile import *
+from profile_svc import *
 
 profile_controller = Blueprint('profile_controller', __name__)
 
