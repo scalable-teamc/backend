@@ -1,17 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 
-from post_init import post_db
-from post_controller import post_controller
-import os
-
-url = "postgresql://" + os.environ["POSTGRES_USER"] + ":" + os.environ["POSTGRES_PASSWORD"] \
-      + "@" + os.environ["POSTGRES_DB"] + "/post_db"
+from post import post_db
+from post.post_controller import post_controller
 
 app = Flask(__name__)
 CORS(app)
-app.config["SQLALCHEMY_DATABASE_URI"] = url
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:password@localhost:5432/postgres"  # "postgresql://postgres:postgres@postgres:5432/postgres" #
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = "super secret key"
 
 
 if __name__ == "__main__":

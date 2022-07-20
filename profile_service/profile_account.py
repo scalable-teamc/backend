@@ -1,4 +1,4 @@
-from profile_init import profile_db as database
+from profile_service import profile_db as database
 
 
 class UserProfile(database.Model):

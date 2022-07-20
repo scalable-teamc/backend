@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
+
+import jwt
+from flask import current_app, jsonify
 from flask_login import login_user
-from auth_init import user_db as database
-from auth_init import MINIO_CLIENT
-from user_account import UserAccount
+from . import user_db as database, MINIO_CLIENT
+from .user_account import UserAccount
 
 
 def authenticate(username: str, password: str):
@@ -12,7 +15,14 @@ def authenticate(username: str, password: str):
     user: UserAccount = get_user_by_username(username)
     if user and user.verify_password(password):
         login_user(user)
-        return {"success": True, "uid": user.id, "message": "Successfully Login as {}".format(username)}
+        token = jwt.encode({
+            'id': user.id,
+            'sub': username,
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)},
+            current_app.config['SECRET_KEY'])
+        return {"success": True, "uid": user.id, "message": "Successfully Login as {}".format(username),
+                'token': token}
     return {"success": False, "message": "Login Fail"}
 
 
@@ -49,3 +59,25 @@ def get_user_by_id(user_id: int) -> UserAccount:
 
 def get_user_by_username(username: str) -> UserAccount:
     return database.session.query(UserAccount).filter_by(username=username).first()
+
+
+def get_id_by_token(token):
+    invalid_msg = {
+        'message': 'Invalid token. Registeration and / or authentication required',
+        'authenticated': False
+    }
+    expired_msg = {
+        'message': 'Expired token. Reauthentication required.',
+        'authenticated': False
+    }
+    try:
+        data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms="HS256")
+        user = get_user_by_username(data['sub'])
+        if not user:
+            return 'user not found'
+        return {'uid': user.id, 'username': user.username, 'success': True}
+    except jwt.ExpiredSignatureError:
+        return jsonify(expired_msg), 401  # 401 is Unauthorized HTTP status code
+    except (jwt.InvalidTokenError, Exception) as e:
+        print(e)
+        return jsonify(invalid_msg), 401

@@ -1,7 +1,7 @@
 name: Build Auth CI
 on:
   push:
-    branches: [ eq ]
+    branches: [ main ]
 env:
   REGISTRY: ghcr.io
   BASE_IMG_NAME: ${{ github.repository }}
