@@ -1,7 +1,7 @@
 name: Build profile CI
 on:
   push:
-    branches: [ main ]
+    branches: [ eq ]
 env:
   REGISTRY: ghcr.io
   BASE_IMG_NAME: ${{ github.repository }}

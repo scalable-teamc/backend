@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 import jwt
 from flask import current_app, jsonify
 from flask_login import login_user
-from . import user_db as database, MINIO_CLIENT
-from .user_account import UserAccount
+from auth_init import user_db as database
+from auth_init import MINIO_CLIENT
+from user_account import UserAccount
 
 
 def authenticate(username: str, password: str):
