@@ -12,6 +12,5 @@ eventlet
 redis
 waitress
 SQLAlchemy~=1.4.39
-psycopg2~=2.9.3
 Werkzeug~=2.1.2
 jwt~=1.3.1
