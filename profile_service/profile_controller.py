@@ -5,7 +5,7 @@ from functools import wraps
 import jwt
 from flask import Blueprint, request, jsonify, current_app
 
-from profile_service.profile import *
+from profile_svc import *
 
 profile_controller = Blueprint('profile_controller', __name__)
 

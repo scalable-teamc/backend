@@ -1,5 +1,5 @@
-from feed_service import db as database
-from feed_service.feed_db import Feed, Online
+from feed_init import feed_db as database
+from feed_db import Feed, Online
 from datetime import datetime
 
 
