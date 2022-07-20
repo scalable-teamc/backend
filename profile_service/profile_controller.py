@@ -1,7 +1,6 @@
 import json
 import logging
 from functools import wraps
-
 import jwt
 from flask import Blueprint, request, jsonify, current_app
 

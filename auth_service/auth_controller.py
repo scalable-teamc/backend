@@ -1,5 +1,5 @@
 from functools import wraps
-
+import jwt
 from flask import Blueprint, request
 
 from auth_svc import *
