@@ -1,7 +1,10 @@
 import json
+from functools import wraps
 
-from flask import Flask, request
+from flask import Flask, request, jsonify, current_app
 from flask_socketio import SocketIO, emit
+import jwt
+
 from feed_service.feed import *
 from feed_service import db
 from flask_cors import CORS
@@ -11,12 +14,40 @@ app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/feed_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = "super secret key"
 db.init_app(app)
 with app.app_context():
     db.create_all()
     db.session.commit()
 socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
 socketio.init_app(app, message_queue='redis://127.0.0.1:6379', cors_allowed_origins="*")
+
+
+def token_required(f):
+    @wraps(f)
+    def _verify(*args, **kwargs):
+        auth_headers = request.headers.get('Authorization')
+
+        invalid_msg = {
+            'message': 'Invalid token. Registeration and / or authentication required',
+            'authenticated': False
+        }
+        expired_msg = {
+            'message': 'Expired token. Reauthentication required.',
+            'authenticated': False
+        }
+
+        try:
+            token = auth_headers
+            jwt.decode(token, current_app.config['SECRET_KEY'], algorithms="HS256")
+            return f(*args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            return jsonify(expired_msg), 401  # 401 is Unauthorized HTTP status code
+        except (jwt.InvalidTokenError, Exception) as e:
+            print(e)
+            return jsonify(invalid_msg), 401
+
+    return _verify
 
 
 # Broadcast a message to all clients
@@ -40,6 +71,7 @@ def connect():
 
 
 @app.route('/feed/all', methods=['POST'])
+@token_required
 def get_all_feed():
     data = request.get_json()
     uid = data['uid']
@@ -71,7 +103,9 @@ def disconnect():
 
 if __name__ == '__main__':
     import eventlet
+
     eventlet.monkey_patch()
     import eventlet.wsgi
+
     eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
     # socketio.run(app)

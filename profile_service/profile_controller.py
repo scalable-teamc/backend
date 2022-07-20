@@ -1,13 +1,42 @@
 import json
 import logging
+from functools import wraps
 
-from flask import Blueprint, request
+import jwt
+from flask import Blueprint, request, jsonify, current_app
 
 from profile_service.profile import *
 
 profile_controller = Blueprint('profile_controller', __name__)
 
 
+def token_required(f):
+    @wraps(f)
+    def _verify(*args, **kwargs):
+        auth_headers = request.headers.get('Authorization')
+
+        invalid_msg = {
+            'message': 'Invalid token. Registeration and / or authentication required',
+            'authenticated': False
+        }
+        expired_msg = {
+            'message': 'Expired token. Reauthentication required.',
+            'authenticated': False
+        }
+
+        try:
+            token = auth_headers
+            jwt.decode(token, current_app.config['SECRET_KEY'], algorithms="HS256")
+            return f(*args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            return jsonify(expired_msg), 401  # 401 is Unauthorized HTTP status code
+        except (jwt.InvalidTokenError, Exception) as e:
+            print(e)
+            return jsonify(invalid_msg), 401
+    return _verify
+
+
+@token_required
 @profile_controller.route('/profile/save', methods=['POST'])
 def save_profile():
     data = request.get_json()
@@ -24,6 +53,7 @@ def save_profile():
     return 'All details are saved'
 
 
+@token_required
 @profile_controller.route('/profile/getprof', methods=['POST'])
 def get_profile():
     data = request.get_json()
@@ -47,6 +77,7 @@ def get_profile():
     return json.dumps(value)
 
 
+@token_required
 @profile_controller.route('/profile/getuser', methods=["POST"])
 def get_by_username():
     data = request.get_json()
@@ -67,6 +98,7 @@ def get_by_username():
     return json.dumps(value)
 
 
+@token_required
 @profile_controller.route('/profile/follow', methods=['POST'])
 def following():
     data = request.json
@@ -82,6 +114,7 @@ def following():
         return {"success": False, "message": "User:{} fail to follow User:{}".format(uid, following_id)}
 
 
+@token_required
 @profile_controller.route("/profile/unfollow", methods=["PATCH"])
 def unfollow():
     data = request.json
@@ -94,6 +127,7 @@ def unfollow():
     return {"success": True}
 
 
+@token_required
 @profile_controller.route("/profile/getfollow", methods=["POST"])
 def get_follow_info():
     data = request.json
@@ -103,6 +137,7 @@ def get_follow_info():
     return json.dumps(res)
 
 
+@token_required
 @profile_controller.route("/profile/getshort/<int:uid>", methods=["GET"])
 def get_short(uid):
     profile = get_profile_by_id(uid)
@@ -121,6 +156,7 @@ def get_short(uid):
     return json.dumps(value)
 
 
+@token_required
 @profile_controller.route("/profile/savedPost", methods=['POST'])
 def saved_post_controller():
     data = request.json
@@ -129,6 +165,7 @@ def saved_post_controller():
     return save_post(uid, post_id)
 
 
+@token_required
 @profile_controller.route("/profile/unsavedPost", methods=['PATCH'])
 def unsaved_post_controller():
     data = request.json
@@ -137,6 +174,7 @@ def unsaved_post_controller():
     return unsaved_post(uid, post_id)
 
 
+@token_required
 @profile_controller.route("/profile/archive", methods=['POST'])
 def get_archive():
     data = request.json
