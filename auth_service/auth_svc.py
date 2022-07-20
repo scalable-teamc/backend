@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-
 import jwt
 from flask import current_app, jsonify
 from flask_login import login_user
