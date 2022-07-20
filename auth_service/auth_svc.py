@@ -22,7 +22,7 @@ def authenticate(username: str, password: str):
             'exp': datetime.utcnow() + timedelta(minutes=30)},
             current_app.config['SECRET_KEY'])
         return {"success": True, "uid": user.id, "message": "Successfully Login as {}".format(username),
-                'token': token.decode('UTF-8')}
+                'token': token}
     return {"success": False, "message": "Login Fail"}
 
 
