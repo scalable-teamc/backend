@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
-import jwt
 from flask import current_app, jsonify
 from flask_login import login_user
 from auth_init import user_db as database
 from auth_init import MINIO_CLIENT
 from user_account import UserAccount
+import jwt
 
 
 def authenticate(username: str, password: str):
@@ -22,7 +22,7 @@ def authenticate(username: str, password: str):
             'exp': datetime.utcnow() + timedelta(minutes=30)},
             current_app.config['SECRET_KEY'])
         return {"success": True, "uid": user.id, "message": "Successfully Login as {}".format(username),
-                'token': token}
+                'token': token.decode('UTF-8')}
     return {"success": False, "message": "Login Fail"}
 
 
