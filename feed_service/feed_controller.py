@@ -1,6 +1,4 @@
 from functools import wraps
-
-import sock
 from flask import Flask, request, jsonify, current_app
 import jwt
 import json
@@ -21,7 +19,7 @@ feed_db.init_app(app)
 with app.app_context():
     feed_db.create_all()
     feed_db.session.commit()
-socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*", path="/socket")
 socketio.init_app(app, message_queue='redis://127.0.0.1:6379', cors_allowed_origins="*")
 
 
@@ -52,8 +50,7 @@ def token_required(f):
     return _verify
 
 
-# Broadcast a message to all clients\
-@sock.route('/socket')
+# Broadcast a message to all clients
 @socketio.on('broadcast_message')
 def handle_broadcast(data):
     print(data)
@@ -68,7 +65,6 @@ def handle_broadcast(data):
             emit(to, {'postID': post_id}, broadcast=True)
 
 
-@sock.route('/socket')
 @socketio.event
 def connect():
     emit('my_response', {'data': 'Connected'})
@@ -86,21 +82,18 @@ def get_all_feed():
     return json.dumps(ret)
 
 
-@sock.route('/socket')
 @socketio.on('online')
 def set_online(uid):
     print(request.sid)
     add_online(uid, request.sid)
 
 
-@sock.route('/socket')
 @socketio.on('logout')
 def set_offline():
     print('Logged out')
     remove_online(request.sid)
 
 
-@sock.route('/socket')
 @socketio.event
 def disconnect():
     remove_online(request.sid)
