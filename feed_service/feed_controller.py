@@ -1,6 +1,7 @@
 import json
 from functools import wraps
 
+import sock as sock
 from flask import Flask, request, jsonify, current_app
 from flask_socketio import SocketIO, emit
 import jwt
@@ -82,18 +83,21 @@ def get_all_feed():
     return json.dumps(ret)
 
 
+@sock.route('/socket')
 @socketio.on('online')
 def set_online(uid):
     print(request.sid)
     add_online(uid, request.sid)
 
 
+@sock.route('/socket')
 @socketio.on('logout')
 def set_offline():
     print('Logged out')
     remove_online(request.sid)
 
 
+@sock.route('/socket')
 @socketio.event
 def disconnect():
     remove_online(request.sid)
