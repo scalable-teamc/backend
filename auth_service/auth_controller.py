@@ -1,8 +1,7 @@
 from functools import wraps
-import jwt
 from flask import Blueprint, request
-
 from auth_svc import *
+import jwt
 
 auth_controller = Blueprint('auth_controller', __name__)
 
