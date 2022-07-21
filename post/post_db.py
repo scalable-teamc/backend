@@ -1,5 +1,6 @@
 from post_init import post_db as db
 from datetime import datetime
+from sqlalchemy.sql import func
 
 
 class PasteModel(db.Model):
@@ -18,6 +19,6 @@ class PasteModel(db.Model):
             "username": self.username,
             "likedUser": self.likedUser,
             "content": self.content,
-            "createdAt": self.createdAt
+            "createdAt": func.to_char(self.createdAt, '%Y-%m-%d %H:%M')
         }
 
