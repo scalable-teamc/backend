@@ -19,6 +19,6 @@ class PasteModel(db.Model):
             "username": self.username,
             "likedUser": self.likedUser,
             "content": self.content,
-            "createdAt": func.to_char(self.createdAt, '%Y-%m-%d %H:%M')
+            "createdAt": self.createdAt
         }
 
