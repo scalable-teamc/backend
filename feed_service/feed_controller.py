@@ -38,7 +38,7 @@ def token_required(f):
         }
 
         try:
-            token = auth_headers
+            token = str(auth_headers)
             jwt.decode(token, current_app.config['SECRET_KEY'], algorithms="HS256")
             return f(*args, **kwargs)
         except jwt.ExpiredSignatureError:
