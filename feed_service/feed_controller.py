@@ -15,6 +15,7 @@ app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = "super secret key"
 feed_db.init_app(app)
 with app.app_context():
     feed_db.create_all()
@@ -38,7 +39,7 @@ def token_required(f):
         }
 
         try:
-            token = str(auth_headers)
+            token = auth_headers
             jwt.decode(token, current_app.config['SECRET_KEY'], algorithms="HS256")
             return f(*args, **kwargs)
         except jwt.ExpiredSignatureError:
