@@ -20,7 +20,7 @@ with app.app_context():
     feed_db.create_all()
     feed_db.session.commit()
 socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*", path="/socket")
-socketio.init_app(app, message_queue='redis://127.0.0.1:6379', cors_allowed_origins="*")
+socketio.init_app(app, message_queue=os.environ["REDIS"], cors_allowed_origins="*")
 
 
 def token_required(f):
