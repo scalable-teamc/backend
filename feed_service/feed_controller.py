@@ -20,7 +20,7 @@ feed_db.init_app(app)
 with app.app_context():
     feed_db.create_all()
     feed_db.session.commit()
-socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*", path="/socket")
+socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
 socketio.init_app(app, message_queue=os.environ["REDIS"], cors_allowed_origins="*")
 
 
@@ -69,6 +69,7 @@ def handle_broadcast(data):
 
 @socketio.event
 def connect():
+    print('f')
     emit('my_response', {'data': 'Connected'})
 
 
