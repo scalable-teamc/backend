@@ -37,7 +37,7 @@ def token_required(f):
 # Parameters needed in incoming request: (userID, content, image, type, username, likedUser)
 # What is kept in DB: (userID, content, postID, createAt, username, likedUser)
 @token_required
-@post_controller.route('/post', methods=['POST'])
+@post_controller.route('/post/post', methods=['POST'])
 def post_api():
     json_data = request.get_json()
 
@@ -65,7 +65,7 @@ def post_api():
 # Response dict will contain: (userID, content, image, postID, createAt)
 # image is not kept in DB, but fetched from MINIO upon every get request
 @token_required
-@post_controller.route('/get/<int:postID>', methods=['GET'])
+@post_controller.route('/post/get/<int:postID>', methods=['GET'])
 def get_api(postID):
     result = PasteModel.query.filter_by(postID=postID).first()
     if not result:
@@ -83,7 +83,7 @@ def get_api(postID):
 # Response dict will contain: (userID, content, image, postID, createAt)
 # image is not kept in DB, but fetched from MINIO upon every get request
 @token_required
-@post_controller.route('/get/<int:postID>/<int:userID>', methods=['GET'])
+@post_controller.route('/post/get/<int:postID>/<int:userID>', methods=['GET'])
 def get_api_user_liked(postID, userID):
     result = PasteModel.query.filter_by(postID=postID).first()
     if not result:
@@ -105,7 +105,7 @@ def get_api_user_liked(postID, userID):
 
 # Show most recent tweets
 @token_required
-@post_controller.route('/recent', methods=['POST'])
+@post_controller.route('/post/recent', methods=['POST'])
 def recent_api():
     result = PasteModel.query.order_by("createdAt").limit(100)
     if not result:
@@ -126,7 +126,7 @@ def recent_api():
 # Add userID to a post's likedUser array
 # Parameters needed in incoming request: (postID, userID)
 @token_required
-@post_controller.route('/like', methods=['POST'])
+@post_controller.route('/post/like', methods=['POST'])
 def like_post():
     # Get post
     json_data = request.get_json()
@@ -144,7 +144,7 @@ def like_post():
 # Remove userID from a post's likedUser array
 # Parameters needed in incoming request: (postID, userID)
 @token_required
-@post_controller.route('/unlike', methods=['POST'])
+@post_controller.route('/post/unlike', methods=['POST'])
 def unlike_post():
     # Get post
     json_data = request.get_json()
@@ -167,7 +167,7 @@ def unlike_post():
 
 
 @token_required
-@post_controller.route('/user-post/<int:uid>', methods=['GET'])
+@post_controller.route('/post/user-post/<int:uid>', methods=['GET'])
 def get_user_post(uid):
     query = PasteModel.query.filter_by(userID=uid).order_by(PasteModel.createdAt.desc()).all()
     ret = []
