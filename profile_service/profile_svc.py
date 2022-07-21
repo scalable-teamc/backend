@@ -77,7 +77,7 @@ def add_new_following(user_id: int, new_following_id: int) -> dict:
 def remove_following(user_id: int, remove_id: int) -> dict:
     profile: UserProfile = get_profile_by_id(user_id)
     if remove_id not in profile.following:
-        return {"success": True}
+        return {"success": True, "message": "User not in following"}
     profile.following.remove(remove_id)
     flag_modified(profile, "following")
     database.session.merge(profile)

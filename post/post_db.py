@@ -1,6 +1,5 @@
 from post_init import post_db as db
 from datetime import datetime
-from sqlalchemy.sql import func
 
 
 class PasteModel(db.Model):
